@@ -1,0 +1,3205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Night Reflection · AI 유튜브 성장 OS</title>
+<meta name="theme-color" content="#FAF5E9">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%230B0F1A'/%3E%3Ccircle cx='62' cy='42' r='26' fill='%23E8A54B'/%3E%3Ccircle cx='72' cy='38' r='26' fill='%230B0F1A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0B0F1A;
+    --bg-panel:#10152357;
+    --bg-panel-solid:#101523;
+    --bg-card:#151C2Ecc;
+    --bg-card-hover:#1A2338e6;
+    --border:#26304A;
+    --border-soft:#1D2740;
+    --accent:#E8A54B;
+    --accent-soft:#E8A54B26;
+    --accent-dim:#B8823B;
+    --teal:#4FD6C4;
+    --teal-soft:#4FD6C420;
+    --danger:#E8617A;
+    --text-primary:#EDEFF6;
+    --text-secondary:#B7BECF;
+    --text-muted:#7C869E;
+    --radius-lg:18px;
+    --radius-md:12px;
+    --radius-sm:8px;
+    --shadow-glow:0 0 120px 0 #E8A54B14;
+    --font-display:'Sora',sans-serif;
+    --font-body:'Inter',sans-serif;
+    --font-mono:'JetBrains Mono',monospace;
+    --bg-input:#0D1220;
+  }
+  [data-theme="light"]{
+    --bg-deep:#FAF5E9;
+    --bg-panel-solid:#FFFCF3cc;
+    --bg-card:#FFFBF2b8;
+    --bg-card-hover:#FFFCF3;
+    --border:#E6DCC3;
+    --border-soft:#EFE7D3;
+    --accent:#C6841F;
+    --accent-dim:#A66A15;
+    --accent-soft:#C6841F22;
+    --teal:#2E8E80;
+    --teal-soft:#2E8E8022;
+    --text-primary:#2C2716;
+    --text-secondary:#5A5240;
+    --text-muted:#948A6E;
+    --bg-input:#F1E7CE;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{ transition:background .25s ease, color .25s ease; }
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, #E8A54B14 0%, transparent 60%),
+      radial-gradient(ellipse 700px 600px at 100% 10%, #4FD6C40f 0%, transparent 55%),
+      var(--bg-deep);
+    color:var(--text-primary);
+    font-family:var(--font-body);
+    min-height:100%;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+  button{font-family:inherit; cursor:pointer;}
+  input,textarea,select{font-family:inherit;}
+  ::-webkit-scrollbar{width:8px; height:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--border); border-radius:8px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+
+  /* ---------- App shell ---------- */
+  .app{ display:flex; min-height:100vh; }
+
+  .sidebar{
+    width:252px; flex-shrink:0;
+    background:var(--bg-panel-solid);
+    backdrop-filter:blur(20px) saturate(140%);
+    -webkit-backdrop-filter:blur(20px) saturate(140%);
+    border-right:1px solid var(--border-soft);
+    display:flex; flex-direction:column;
+    padding:22px 16px;
+    position:sticky; top:0; height:100vh;
+    transition:width .22s ease, padding .22s ease;
+    z-index:20;
+  }
+  .sidebar.collapsed{ width:76px; padding:22px 10px; }
+  .sidebar.collapsed .brand-text, .sidebar.collapsed .nav-eyebrow, .sidebar.collapsed .nav-btn span.nav-label,
+  .sidebar.collapsed .key-status span{ display:none; }
+  .sidebar.collapsed .nav-btn{ justify-content:center; }
+  .sidebar.collapsed .brand{ justify-content:center; }
+  .sidebar-toggle{
+    background:transparent; border:1px solid var(--border-soft); color:var(--text-muted);
+    width:26px; height:26px; border-radius:7px; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; margin-left:auto; transition:border-color .15s, color .15s;
+  }
+  .sidebar-toggle:hover{ border-color:var(--accent); color:var(--accent); }
+  .sidebar-toggle svg{ width:14px; height:14px; transition:transform .22s ease; }
+  .sidebar.collapsed .sidebar-toggle{ margin-left:0; }
+  .sidebar.collapsed .sidebar-toggle svg{ transform:rotate(180deg); }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    padding:6px 8px 22px 8px;
+    border-bottom:1px solid var(--border-soft);
+    margin-bottom:18px;
+  }
+  .brand-mark{
+    position:relative; width:34px; height:34px; flex-shrink:0;
+  }
+  .brand-mark .moon{
+    position:absolute; inset:0; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #F7C878, var(--accent) 60%, var(--accent-dim));
+    box-shadow:0 0 18px 2px #E8A54B55;
+    animation:glow 5s ease-in-out infinite;
+  }
+  .brand-mark .shadow{
+    position:absolute; top:0; left:9px; width:34px; height:34px; border-radius:50%;
+    background:var(--bg-panel-solid);
+  }
+  @keyframes glow{
+    0%,100%{ box-shadow:0 0 14px 1px #E8A54B44; }
+    50%{ box-shadow:0 0 22px 4px #E8A54B66; }
+  }
+  .brand-text .t1{ font-family:var(--font-display); font-weight:700; font-size:14.5px; letter-spacing:0.2px; }
+  .brand-text .t2{ font-size:10.5px; color:var(--text-muted); letter-spacing:0.4px; margin-top:1px; }
+
+  nav.tabs{ display:flex; flex-direction:column; gap:3px; flex:1; overflow-y:auto; }
+  .nav-eyebrow{ font-size:10.5px; color:var(--text-muted); letter-spacing:1.2px; text-transform:uppercase; padding:14px 10px 6px; }
+  .nav-btn{
+    display:flex; align-items:center; gap:11px;
+    padding:10px 11px; border-radius:var(--radius-sm);
+    background:transparent; border:1px solid transparent; color:var(--text-secondary);
+    font-size:13.5px; font-weight:500; text-align:left; width:100%;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .nav-btn svg{ width:17px; height:17px; flex-shrink:0; opacity:.85; }
+  .nav-btn:hover{ background:var(--bg-card); color:var(--text-primary); }
+  .nav-btn.active{
+    background:linear-gradient(135deg, var(--accent-soft), #E8A54B0d);
+    border-color:#E8A54B40; color:var(--accent); font-weight:600;
+  }
+  .nav-btn.active svg{ opacity:1; }
+
+  .sidebar-foot{
+    border-top:1px solid var(--border-soft); padding-top:14px; margin-top:10px;
+  }
+  .key-status{ display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:var(--radius-sm); background:var(--bg-card); font-size:11.5px; color:var(--text-muted); }
+  .dot{ width:7px; height:7px; border-radius:50%; background:var(--danger); flex-shrink:0; }
+  .dot.ok{ background:#4EDB8F; box-shadow:0 0 6px #4EDB8F88; }
+
+  /* ---------- Main ---------- */
+  .content-area{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  main{ padding:34px 40px 60px; max-width:1180px; }
+  .page-head{ margin-bottom:26px; }
+  .eyebrow{ font-family:var(--font-mono); font-size:11.5px; color:var(--teal); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:8px; }
+  h1.page-title{ font-family:var(--font-display); font-size:27px; font-weight:700; letter-spacing:-0.2px; }
+  p.page-sub{ color:var(--text-muted); font-size:13.5px; margin-top:7px; max-width:640px; line-height:1.6; }
+
+  .card{
+    background:var(--bg-card);
+    border:1px solid var(--border-soft);
+    border-radius:var(--radius-lg);
+    padding:22px 24px;
+    backdrop-filter:blur(18px) saturate(140%);
+    -webkit-backdrop-filter:blur(18px) saturate(140%);
+    box-shadow:0 8px 32px -12px #00000055;
+    transition:background .25s ease, border-color .25s ease;
+  }
+  .card + .card{ margin-top:16px; }
+  .card-title{ font-family:var(--font-display); font-size:15px; font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:8px;}
+  .card-title .badge{ font-family:var(--font-mono); font-size:10px; background:var(--teal-soft); color:var(--teal); padding:2px 7px; border-radius:20px; font-weight:600; letter-spacing:.3px;}
+
+  label.field-label{ display:block; font-size:12.5px; color:var(--text-secondary); margin-bottom:7px; font-weight:500; }
+  input[type=text], input[type=number], input[type=password], textarea, select{
+    width:100%; background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary);
+    border-radius:var(--radius-sm); padding:11px 13px; font-size:13.5px; outline:none;
+    transition:border-color .15s;
+  }
+  textarea{ resize:vertical; line-height:1.6; }
+  input:focus, textarea:focus, select:focus{ border-color:var(--accent); }
+  input::placeholder, textarea::placeholder{ color:var(--text-muted); }
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:11px 18px; border-radius:var(--radius-sm); border:1px solid transparent;
+    font-size:13.5px; font-weight:600; transition:transform .1s, opacity .15s, background .15s;
+  }
+  .btn:active{ transform:scale(0.98); }
+  .btn-primary{ background:linear-gradient(135deg,#F0B463,var(--accent)); color:#1A1102; }
+  .btn-primary:hover{ opacity:.92; }
+  .btn-primary:disabled{ opacity:.45; cursor:not-allowed; }
+  .btn-ghost{ background:transparent; border-color:var(--border); color:var(--text-secondary); }
+  .archive-view-btn.active{ border-color:var(--accent); color:var(--accent); background:var(--accent-soft); }
+  .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
+  .btn-sm{ padding:7px 12px; font-size:12px; }
+
+  .row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .row > *{ flex:1; min-width:180px; }
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+  .grid4{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  @media(max-width:760px){ .grid2,.grid3,.grid4{ grid-template-columns:1fr; } main{ padding:22px 16px 50px;} .sidebar{ display:none; } }
+  .stat-card .stat-value{ font-family:var(--font-mono); font-size:22px; font-weight:700; margin:4px 0; }
+  .stat-card .stat-sub{ font-size:11px; color:var(--text-muted); }
+  .stat-card .stat-locked{ font-size:11.5px; color:var(--text-muted); line-height:1.5; margin-top:6px; }
+  .rank-badge{ display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:6px; background:var(--accent-soft); color:var(--accent); font-family:var(--font-mono); font-size:11px; font-weight:700; flex-shrink:0; margin-right:8px; }
+
+  .empty{ text-align:center; padding:34px 10px; color:var(--text-muted); font-size:13px; }
+  .empty svg{ width:34px; height:34px; margin-bottom:10px; opacity:.5; }
+
+  .spinner{ width:15px; height:15px; border:2px solid #1A1102; border-top-color:transparent; border-radius:50%; animation:spin .7s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* metric bars */
+  .metric{ margin-bottom:12px; }
+  .metric-top{ display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); margin-bottom:5px; }
+  .metric-top b{ font-family:var(--font-mono); color:var(--text-primary); }
+  .bar-track{ height:6px; border-radius:6px; background:var(--bg-input); overflow:hidden; border:1px solid var(--border-soft);}
+  .bar-fill{ height:100%; border-radius:6px; background:linear-gradient(90deg,var(--teal),var(--accent)); transition:width .5s ease; }
+
+  .result-block{ border-top:1px solid var(--border-soft); padding-top:16px; margin-top:16px; }
+  .result-block h4{ font-size:13px; color:var(--accent); font-weight:600; margin-bottom:6px; font-family:var(--font-display); }
+  .result-block p{ font-size:13.3px; color:var(--text-secondary); line-height:1.7; white-space:pre-wrap; }
+
+  table.title-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.title-table th{ text-align:left; color:var(--text-muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.5px; padding:8px 10px; border-bottom:1px solid var(--border-soft);}
+  table.title-table td{ padding:10px; border-bottom:1px solid var(--border-soft); color:var(--text-secondary); vertical-align:top; }
+  table.title-table tr:last-child td{ border-bottom:none; }
+  table.title-table td.rank{ font-family:var(--font-mono); color:var(--accent); font-weight:700; width:26px;}
+  table.title-table td.ttl{ color:var(--text-primary); font-weight:500; }
+  table.title-table td.score{ font-family:var(--font-mono); color:var(--teal); font-weight:600; white-space:nowrap;}
+
+  .pill{ display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; background:var(--bg-card-hover); color:var(--text-secondary); border:1px solid var(--border-soft); margin:2px 4px 2px 0;}
+  .keyword-chip{ cursor:pointer; transition:border-color .15s, color .15s; }
+  .keyword-chip:hover{ border-color:var(--accent); color:var(--accent); }
+  .pill.gold{ background:var(--accent-soft); color:var(--accent); border-color:#E8A54B40;}
+
+  .stage-track{ display:flex; align-items:center; gap:4px; margin:16px 0 22px; }
+  .stage-node{ flex:1; text-align:center; }
+  .stage-dot{ width:100%; height:8px; border-radius:6px; background:var(--bg-input); border:1px solid var(--border-soft); margin-bottom:8px; overflow:hidden;}
+  .stage-dot.done{ background:linear-gradient(90deg,var(--teal),var(--accent)); border-color:transparent; }
+  .stage-dot.current{ background:linear-gradient(90deg,var(--accent-dim),var(--accent)); border-color:transparent; animation:pulseStage 1.6s ease-in-out infinite; }
+  @keyframes pulseStage{ 0%,100%{opacity:1;} 50%{opacity:.55;} }
+  .stage-label{ font-size:10.5px; color:var(--text-muted); font-family:var(--font-mono); }
+  .stage-label.active{ color:var(--accent); font-weight:700; }
+
+  .task-list{ list-style:none; }
+  .task-list li{ display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--border-soft); font-size:13.3px; color:var(--text-secondary); align-items:flex-start;}
+  .task-list li:last-child{ border-bottom:none; }
+  .task-list li .chk{ width:16px; height:16px; border-radius:5px; border:1.5px solid var(--border); flex-shrink:0; margin-top:2px;}
+
+  .idea-card{ background:var(--bg-input); border:1px solid var(--border-soft); border-radius:var(--radius-md); padding:14px 16px; margin-bottom:10px; transition:border-color .15s; }
+  .idea-card:hover{ border-color:var(--accent); }
+  .idea-card .ititle{ font-weight:600; font-size:13.8px; margin-bottom:6px; }
+  .idea-card .imeta{ font-size:11.5px; color:var(--text-muted); margin-bottom:8px; }
+  .idea-card .ihook{ font-size:12.8px; color:var(--text-secondary); line-height:1.6; }
+
+  .modal-overlay{ position:fixed; inset:0; background:#05070Ecc; backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; z-index:50; padding:20px;}
+  .modal{ background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:26px; width:100%; max-width:440px; box-shadow:0 20px 60px #000a; }
+  .modal h3{ font-family:var(--font-display); font-size:16px; margin-bottom:6px; }
+  .modal p.hint{ font-size:12.5px; color:var(--text-muted); margin-bottom:16px; line-height:1.6;}
+  .hidden{ display:none !important; }
+
+  .toast{ position:fixed; bottom:24px; right:24px; background:var(--bg-card); border:1px solid var(--accent); color:var(--text-primary); padding:12px 18px; border-radius:var(--radius-sm); font-size:13px; z-index:80; box-shadow:0 10px 30px #0008; animation:toastIn .25s ease;}
+  @keyframes toastIn{ from{ transform:translateY(10px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+
+  @media print{
+    .sidebar, #reportControls, .btn, .topbar{ display:none !important; }
+    main{ padding:0; max-width:100%; }
+    body{ background:#fff; color:#000; }
+    .card{ border:1px solid #ccc; break-inside:avoid; }
+  }
+
+  /* ---------- Topbar (header) ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:15;
+    display:flex; align-items:center; gap:14px;
+    padding:14px 40px; margin-bottom:8px;
+    background:var(--bg-panel-solid);
+    backdrop-filter:blur(20px) saturate(140%);
+    -webkit-backdrop-filter:blur(20px) saturate(140%);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .topbar-search{
+    flex:1; max-width:420px; position:relative;
+  }
+  .topbar-search svg{ position:absolute; left:12px; top:50%; transform:translateY(-50%); width:15px; height:15px; color:var(--text-muted); }
+  .topbar-search input{ padding-left:34px; background:var(--bg-card); }
+  .topbar-spacer{ flex:1; }
+  .topbar-icon-btn{
+    position:relative; width:36px; height:36px; border-radius:10px; border:1px solid var(--border-soft);
+    background:var(--bg-card); color:var(--text-secondary); display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:border-color .15s, color .15s;
+  }
+  .topbar-icon-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .topbar-icon-btn svg{ width:17px; height:17px; }
+  .notif-dot{ position:absolute; top:7px; right:7px; width:7px; height:7px; border-radius:50%; background:var(--danger); border:1.5px solid var(--bg-panel-solid); }
+  .profile-chip{
+    display:flex; align-items:center; gap:8px; padding:5px 12px 5px 5px; border-radius:22px;
+    border:1px solid var(--border-soft); background:var(--bg-card); flex-shrink:0; cursor:pointer;
+  }
+  .profile-chip img, .profile-chip .avatar-fallback{
+    width:26px; height:26px; border-radius:50%; object-fit:cover; background:linear-gradient(135deg,var(--accent),var(--teal));
+    display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#1A1102; flex-shrink:0;
+  }
+  .profile-chip .pname{ font-size:12.5px; font-weight:600; max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  .dropdown-panel{
+    position:absolute; top:46px; right:0; width:300px; max-height:360px; overflow-y:auto;
+    background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-md);
+    box-shadow:0 16px 40px #000a; padding:8px; z-index:30;
+    backdrop-filter:blur(20px);
+  }
+  .dropdown-wrap{ position:relative; }
+  .dropdown-item{ padding:9px 10px; border-radius:8px; font-size:12.5px; color:var(--text-secondary); }
+  .dropdown-item:hover{ background:var(--bg-card-hover); }
+  .dropdown-empty{ padding:16px 10px; text-align:center; color:var(--text-muted); font-size:12px; }
+  @media(max-width:760px){ .topbar{ padding:12px 16px; } .topbar-search{ display:none; } }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><div class="moon"></div><div class="shadow"></div></div>
+      <div class="brand-text">
+        <div class="t1">Night Reflection</div>
+        <div class="t2">AI 유튜브 성장 OS</div>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" title="사이드바 접기/펼치기">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+    </div>
+
+    <nav class="tabs">
+      <button class="nav-btn active" data-tab="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        <span class="nav-label">대시보드</span>
+      </button>
+
+      <div class="nav-eyebrow">채널 · 영상 분석</div>
+      <button class="nav-btn" data-tab="channel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7 16 12l7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        <span class="nav-label">채널 조회</span>
+      </button>
+      <button class="nav-btn" data-tab="video">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M10 8.5v7l6-3.5-6-3.5z"/></svg>
+        <span class="nav-label">영상 분석</span>
+      </button>
+      <button class="nav-btn" data-tab="title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h7"/></svg>
+        <span class="nav-label">제목 분석</span>
+      </button>
+      <button class="nav-btn" data-tab="thumbnail">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8.5" cy="9.5" r="1.6"/><path d="M21 15l-5-5-9 9"/></svg>
+        <span class="nav-label">썸네일 분석</span>
+      </button>
+      <button class="nav-btn" data-tab="script">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h6"/></svg>
+        <span class="nav-label">대본 분석</span>
+      </button>
+      <button class="nav-btn" data-tab="seo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span class="nav-label">SEO 분석</span>
+      </button>
+      <button class="nav-btn" data-tab="algorithm">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="4" height="9" rx="1"/><rect x="10" y="6" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="17" rx="1"/></svg>
+        <span class="nav-label">알고리즘 분석</span>
+      </button>
+
+      <div class="nav-eyebrow">리서치</div>
+      <button class="nav-btn" data-tab="keyword">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h.01M7 3h6l8 8-10 10-8-8V3z"/></svg>
+        <span class="nav-label">키워드 분석</span>
+      </button>
+      <button class="nav-btn" data-tab="trend">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
+        <span class="nav-label">트렌드 분석</span>
+      </button>
+      <button class="nav-btn" data-tab="competitor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="9" r="3"/><circle cx="17" cy="9" r="3"/><path d="M2 20c0-3 2.5-5 6-5s6 2 6 5M12 20c0-2.5 2-4.5 5-4.5s5 2 5 4.5"/></svg>
+        <span class="nav-label">경쟁채널 분석</span>
+      </button>
+      <button class="nav-btn" data-tab="audience">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+        <span class="nav-label">시청자 분석</span>
+      </button>
+
+      <div class="nav-eyebrow">예측 · 실험</div>
+      <button class="nav-btn" data-tab="predictor">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 5h6v6"/></svg>
+        <span class="nav-label">CTR·시청지속 예측</span>
+      </button>
+      <button class="nav-btn" data-tab="abtest">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="8" height="16" rx="1"/><rect x="13" y="4" width="8" height="16" rx="1"/><path d="M7 9v2M17 9v2"/></svg>
+        <span class="nav-label">A/B 테스트</span>
+      </button>
+
+      <div class="nav-eyebrow">제작</div>
+      <button class="nav-btn" data-tab="idea">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.5.5 1 1.3 1 2.5h6c0-1.2.5-2 1-2.5A6 6 0 0 0 12 2z"/></svg>
+        <span class="nav-label">아이디어 생성기</span>
+      </button>
+
+      <div class="nav-eyebrow">전략 · 운영</div>
+      <button class="nav-btn" data-tab="improve">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z"/></svg>
+        <span class="nav-label">AI 개선 제안</span>
+      </button>
+      <button class="nav-btn" data-tab="strategy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg>
+        <span class="nav-label">성장 전략</span>
+      </button>
+      <button class="nav-btn" data-tab="coach">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18.7 8 12 14.7l-3.5-3.5L3 16.5"/></svg>
+        <span class="nav-label">AI 성장 코치</span>
+      </button>
+      <button class="nav-btn" data-tab="report">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h1M9 17h6M14 13h1"/></svg>
+        <span class="nav-label">자동 리포트</span>
+      </button>
+      <button class="nav-btn" data-tab="archive">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="5" rx="1"/><path d="M4 8v11a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V8M10 13h4"/></svg>
+        <span class="nav-label">데이터센터</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-foot">
+      <button class="nav-btn" id="openSettings" style="margin-bottom:8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+        <span class="nav-label">API 설정</span>
+      </button>
+      <div class="key-status">
+        <div class="dot" id="keyDot"></div>
+        <span id="keyStatusText">OpenAI 키 미설정</span>
+      </div>
+      <div class="key-status" style="margin-top:6px;">
+        <div class="dot" id="ytKeyDot"></div>
+        <span id="ytKeyStatusText">YouTube 키 미설정</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== Content area (Header + Main) ===== -->
+  <div class="content-area">
+    <header class="topbar">
+      <div class="topbar-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+        <input type="text" id="topbarSearch" placeholder="분석 기록 검색... (Enter)">
+      </div>
+      <div class="topbar-spacer"></div>
+
+      <button class="topbar-icon-btn" id="themeToggle" title="다크/라이트 모드 전환">
+        <svg id="themeIconMoon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></svg>
+      </button>
+
+      <div class="dropdown-wrap">
+        <button class="topbar-icon-btn" id="notifBtn" title="알림">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span class="notif-dot" id="notifDot"></span>
+        </button>
+        <div class="dropdown-panel hidden" id="notifPanel"></div>
+      </div>
+
+      <div class="dropdown-wrap">
+        <div class="profile-chip" id="profileChip">
+          <div class="avatar-fallback" id="profileAvatar">?</div>
+          <span class="pname" id="profileName">채널 미연결</span>
+        </div>
+        <div class="dropdown-panel hidden" id="profilePanel"></div>
+      </div>
+    </header>
+
+    <!-- ===== Main ===== -->
+    <main>
+
+    <!-- ---- 대시보드 ---- -->
+    <section id="tab-dashboard" class="tab-panel">
+      <div class="page-head">
+        <div class="eyebrow">Dashboard</div>
+        <h1 class="page-title">대시보드</h1>
+        <p class="page-sub">채널 조회·성장 코치 데이터를 모아 오늘의 현황을 보여줍니다. 먼저 <b style="color:var(--text-secondary)">채널 조회</b> 탭에서 채널을 한 번 불러와 주세요.</p>
+      </div>
+      <div id="dashboardContent"></div>
+    </section>
+
+    <!-- ---- 채널 조회 ---- -->
+    <section id="tab-channel" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Channel Lookup</div>
+        <h1 class="page-title">채널 조회</h1>
+        <p class="page-sub">YouTube Data API로 실제 채널 통계와 최근 업로드를 불러옵니다. 공개 데이터만 조회하며 로그인은 필요 없습니다.</p>
+      </div>
+      <div class="card">
+        <label class="field-label">채널 핸들 / URL / 채널ID</label>
+        <div class="row">
+          <input type="text" id="channelQueryInput" placeholder="예: @nightreflection 또는 채널 URL, 채널명">
+          <button class="btn btn-primary" id="btnFetchChannel" style="flex:0 0 auto;"><span class="btn-label">채널 불러오기</span></button>
+        </div>
+      </div>
+      <div id="channelResult"></div>
+    </section>
+
+    <!-- ---- 영상 분석 ---- -->
+    <section id="tab-video" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Video Intelligence</div>
+        <h1 class="page-title">영상 분석</h1>
+        <p class="page-sub">영상 URL을 넣으면 공개 지표(조회수·좋아요·댓글)를 불러오고, AI가 성공/실패 요인과 Hook·Story·CTA를 분석합니다. ※ 노출수·CTR·이탈구간 등 비공개 애널리틱스는 YouTube 스튜디오(OAuth 필요)에서만 볼 수 있어 이 항목은 제공하지 않습니다.</p>
+      </div>
+      <div class="card">
+        <label class="field-label">영상 URL 또는 영상 ID</label>
+        <div class="row">
+          <input type="text" id="videoQueryInput" placeholder="예: https://youtube.com/watch?v=... 또는 영상 ID">
+          <button class="btn btn-primary" id="btnFetchVideo" style="flex:0 0 auto;"><span class="btn-label">영상 분석하기</span></button>
+        </div>
+      </div>
+      <div id="videoResult"></div>
+    </section>
+
+    <!-- ---- 썸네일 분석 ---- -->
+    <section id="tab-thumbnail" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Thumbnail Vision</div>
+        <h1 class="page-title">썸네일 분석</h1>
+        <p class="page-sub">이미지를 업로드하면 GPT Vision이 얼굴·표정·텍스트·색감·레이아웃·클릭유도력을 채점합니다.</p>
+      </div>
+      <div class="card">
+        <label class="field-label">썸네일 이미지 업로드</label>
+        <input type="file" id="thumbnailFileInput" accept="image/*">
+        <div id="thumbnailPreviewWrap" style="margin-top:14px;"></div>
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnAnalyzeThumbnail" disabled><span class="btn-label">썸네일 분석하기</span></button>
+      </div>
+      <div id="thumbnailResult"></div>
+    </section>
+
+    <!-- ---- 제목 분석 ---- -->
+    <section id="tab-title" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Title Intelligence</div>
+        <h1 class="page-title">제목 분석 & 생성</h1>
+        <p class="page-sub">제목 하나를 넣으면 AI가 클릭률·검색성·감정 점수를 정밀 채점하고, 소재를 넣으면 CTR 높은 순으로 정렬된 제목 20개를 생성합니다.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">제목 채점 <span class="badge">SCORE</span></div>
+        <label class="field-label">분석할 제목</label>
+        <input type="text" id="titleInput" placeholder="예: 30대에 퇴사하고 깨달은 돈의 진짜 원리">
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnScoreTitle">
+          <span class="btn-label">제목 채점하기</span>
+        </button>
+        <div id="titleScoreResult"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">제목 20개 생성 <span class="badge">GENERATE</span></div>
+        <div class="row">
+          <div>
+            <label class="field-label">영상 소재 / 키워드</label>
+            <input type="text" id="titleTopicInput" placeholder="예: 40대 재테크 시작, 파이어족, 소비 습관">
+          </div>
+          <div style="max-width:180px;">
+            <label class="field-label">톤앤매너</label>
+            <select id="titleToneSelect">
+              <option value="냉철한 분석형">냉철한 분석형</option>
+              <option value="공감형 스토리텔링">공감형 스토리텔링</option>
+              <option value="충격적 반전형">충격적 반전형</option>
+              <option value="차분한 사유형">차분한 사유형</option>
+            </select>
+          </div>
+        </div>
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnGenTitles"><span class="btn-label">제목 20개 생성</span></button>
+        <div id="titleGenResult"></div>
+      </div>
+    </section>
+
+    <!-- ---- 대본 분석 ---- -->
+    <section id="tab-script" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Script Intelligence</div>
+        <h1 class="page-title">대본 분석</h1>
+        <p class="page-sub">Hook · Story · Retention 구조를 AI가 분해하고, 지루한 구간과 개선안을 짚어줍니다.</p>
+      </div>
+      <div class="card">
+        <label class="field-label">대본 전문 붙여넣기</label>
+        <textarea id="scriptInput" rows="10" placeholder="대본을 여기에 붙여넣으세요..."></textarea>
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnAnalyzeScript"><span class="btn-label">대본 분석하기</span></button>
+      </div>
+      <div id="scriptResult"></div>
+    </section>
+
+    <!-- ---- SEO 분석 ---- -->
+    <section id="tab-seo" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">SEO Intelligence</div>
+        <h1 class="page-title">SEO 분석</h1>
+        <p class="page-sub">제목·설명·태그를 넣으면 검색 최적화 완성도를 채점하고 부족한 부분을 짚어줍니다.</p>
+      </div>
+      <div class="card">
+        <label class="field-label">제목</label>
+        <input type="text" id="seoTitleInput" placeholder="영상 제목">
+        <div style="height:12px"></div>
+        <label class="field-label">설명(Description)</label>
+        <textarea id="seoDescInput" rows="4" placeholder="영상 설명란 텍스트"></textarea>
+        <div style="height:12px"></div>
+        <label class="field-label">태그 (쉼표로 구분)</label>
+        <input type="text" id="seoTagsInput" placeholder="예: 경제, 재테크, 자기계발">
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnAnalyzeSeo"><span class="btn-label">SEO 분석하기</span></button>
+      </div>
+      <div id="seoResult"></div>
+    </section>
+
+    <!-- ---- 키워드 분석 ---- -->
+    <section id="tab-keyword" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Keyword Research</div>
+        <h1 class="page-title">키워드 분석</h1>
+        <p class="page-sub">키워드를 넣으면 AI가 검색량·경쟁도·성장률·검색의도·롱테일/관련 키워드를 추정하고, 지금 만들면 좋은 소재를 추천합니다. 필요하면 소재 100개까지 한 번에 뽑을 수 있습니다. ※ 실제 Google/YouTube 검색량 데이터가 아닌 AI 추정치입니다.</p>
+      </div>
+      <div class="card">
+        <label class="field-label">키워드</label>
+        <div class="row">
+          <input type="text" id="keywordInput" placeholder="예: 부동산 경매">
+          <button class="btn btn-primary" id="btnAnalyzeKeyword" style="flex:0 0 auto;"><span class="btn-label">키워드 분석하기</span></button>
+        </div>
+        <div style="margin-top:10px;">
+          <span style="font-size:11.5px; color:var(--text-muted); margin-right:6px;">빠른 선택:</span>
+          <button class="pill keyword-chip" data-kw="철학" type="button">철학</button>
+          <button class="pill keyword-chip" data-kw="경제" type="button">경제</button>
+          <button class="pill keyword-chip" data-kw="심리" type="button">심리</button>
+          <button class="pill keyword-chip" data-kw="역사" type="button">역사</button>
+        </div>
+      </div>
+      <div id="keywordResult"></div>
+    </section>
+
+    <!-- ---- 트렌드 분석 ---- -->
+    <section id="tab-trend" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Trend Radar</div>
+        <h1 class="page-title">트렌드 분석</h1>
+        <p class="page-sub">YouTube 실시간 인기 급상승 영상을 불러와 AI가 지금 제작하면 좋은 소재를 추천합니다.</p>
+      </div>
+      <div class="card">
+        <div class="row">
+          <div>
+            <label class="field-label">국가</label>
+            <select id="trendRegionSelect">
+              <option value="KR">대한민국</option>
+              <option value="US">미국</option>
+              <option value="JP">일본</option>
+            </select>
+          </div>
+          <div style="flex:0 0 auto; align-self:flex-end;">
+            <button class="btn btn-primary" id="btnFetchTrend"><span class="btn-label">트렌드 불러오기</span></button>
+          </div>
+        </div>
+      </div>
+      <div id="trendResult"></div>
+    </section>
+
+    <!-- ---- 경쟁채널 분석 ---- -->
+    <section id="tab-competitor" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Competitor Radar</div>
+        <h1 class="page-title">경쟁채널 분석</h1>
+        <p class="page-sub">경쟁/벤치마킹 채널을 최대 3개까지 넣으면 조회수·업로드빈도·영상길이·댓글수를 비교하고, AI가 각 채널이 왜 성장하는지·무엇을 배워야 하는지·차별화 전략을 제안합니다.</p>
+      </div>
+      <div class="card">
+        <div class="row">
+          <div>
+            <label class="field-label">경쟁 채널 A</label>
+            <input type="text" id="competitorQueryInputA" placeholder="예: @competitorA">
+          </div>
+          <div>
+            <label class="field-label">경쟁 채널 B (선택)</label>
+            <input type="text" id="competitorQueryInputB" placeholder="예: @competitorB">
+          </div>
+          <div>
+            <label class="field-label">경쟁 채널 C (선택)</label>
+            <input type="text" id="competitorQueryInputC" placeholder="예: @competitorC">
+          </div>
+        </div>
+        <div style="height:10px"></div>
+        <label class="field-label">내 채널 주제 (선택)</label>
+        <input type="text" id="myNicheInput" placeholder="예: 경제·자기계발 유튜브">
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnAnalyzeCompetitor"><span class="btn-label">경쟁채널 분석하기</span></button>
+      </div>
+      <div id="competitorResult"></div>
+    </section>
+
+    <!-- ---- 시청자 분석 ---- -->
+    <section id="tab-audience" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Audience Persona</div>
+        <h1 class="page-title">시청자 분석</h1>
+        <p class="page-sub">채널 소재와 최근 영상 제목을 바탕으로 AI가 예상 시청자 페르소나를 추정합니다. ※ 연령/성별/국가 등 실제 인구통계는 YouTube 스튜디오 애널리틱스(OAuth 필요)에서만 확인 가능해 이 분석은 AI 추정치입니다.</p>
+      </div>
+      <div class="card">
+        <label class="field-label">채널 주제 / 컨셉</label>
+        <input type="text" id="audienceNicheInput" placeholder="예: 30~50대 대상 경제·철학 채널">
+        <div style="height:12px"></div>
+        <label class="field-label">최근 영상 제목 (한 줄에 하나씩, 선택)</label>
+        <textarea id="audienceTitlesInput" rows="4" placeholder="채널 조회 탭에서 불러온 영상 제목을 붙여넣으면 더 정확해집니다"></textarea>
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnAnalyzeAudience"><span class="btn-label">시청자 페르소나 추정하기</span></button>
+      </div>
+      <div id="audienceResult"></div>
+    </section>
+
+    <!-- ---- CTR·시청지속 예측 ---- -->
+    <section id="tab-predictor" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">CTR & Retention Predictor</div>
+        <h1 class="page-title">CTR·시청지속시간 예측 AI</h1>
+        <p class="page-sub">제목·썸네일·대본 초안을 함께 넣으면 AI가 예상 CTR과 예상 평균 시청 지속시간을 통합 예측하고 개선안을 제시합니다. 실제 애널리틱스 예측이 아닌 콘텐츠 신호 기반 AI 추정치입니다.</p>
+      </div>
+      <div class="card">
+        <label class="field-label">제목</label>
+        <input type="text" id="predictorTitleInput" placeholder="영상 제목">
+        <div style="height:12px"></div>
+        <label class="field-label">썸네일 이미지 (선택)</label>
+        <input type="file" id="predictorThumbFileInput" accept="image/*">
+        <div id="predictorThumbPreview" style="margin-top:10px;"></div>
+        <div style="height:12px"></div>
+        <label class="field-label">대본 초안 (선택)</label>
+        <textarea id="predictorScriptInput" rows="6" placeholder="대본 초안을 붙여넣으면 예측 정확도가 올라갑니다"></textarea>
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnRunPredictor"><span class="btn-label">CTR·시청지속시간 예측하기</span></button>
+      </div>
+      <div id="predictorResult"></div>
+    </section>
+
+    <!-- ---- A/B 테스트 ---- -->
+    <section id="tab-abtest" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">A/B Test Lab</div>
+        <h1 class="page-title">A/B 테스트</h1>
+        <p class="page-sub">제목 또는 썸네일 문구 두 안을 비교해 AI가 어떤 요소가 성과에 영향을 줄지 분석하고, 테스트 기록을 남깁니다.</p>
+      </div>
+      <div class="card">
+        <div class="row">
+          <select id="abtestTypeSelect" style="max-width:160px;">
+            <option value="title">제목 비교</option>
+            <option value="thumbnailText">썸네일 문구 비교</option>
+          </select>
+        </div>
+        <div style="height:10px"></div>
+        <div class="grid2">
+          <div>
+            <label class="field-label">A안</label>
+            <input type="text" id="abtestAInput" placeholder="A안 입력">
+          </div>
+          <div>
+            <label class="field-label">B안</label>
+            <input type="text" id="abtestBInput" placeholder="B안 입력">
+          </div>
+        </div>
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnRunAbtest"><span class="btn-label">A/B 비교 분석하기</span></button>
+      </div>
+      <div id="abtestResult"></div>
+      <div class="card">
+        <div class="card-title">테스트 기록 <span class="badge">HISTORY</span></div>
+        <div id="abtestHistory"></div>
+      </div>
+    </section>
+
+    <!-- ---- 아이디어 생성기 ---- -->
+    <section id="tab-idea" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Idea Pipeline</div>
+        <h1 class="page-title">아이디어 생성기</h1>
+        <p class="page-sub">키워드 하나로 아이디어 → 제목 → 썸네일 문구 → 스크립트 개요 → 설명/태그까지 이어서 생성합니다.</p>
+      </div>
+      <div class="card">
+        <label class="field-label">키워드 / 채널 주제</label>
+        <input type="text" id="ideaKeywordInput" placeholder="예: 경제적 자유, 인간관계 심리, 자기계발">
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnGenIdeas"><span class="btn-label">아이디어 20개 생성</span></button>
+        <div id="ideaListResult"></div>
+      </div>
+      <div class="card hidden" id="ideaPipelineCard">
+        <div class="card-title">선택한 아이디어 전개 <span class="badge">PIPELINE</span></div>
+        <div id="ideaPipelineResult"></div>
+      </div>
+    </section>
+
+    <!-- ---- AI 성장 코치 ---- -->
+    <section id="tab-coach" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Growth Coach</div>
+        <h1 class="page-title">AI 성장 코치</h1>
+        <p class="page-sub">채널 현황을 입력하면 성장 단계를 진단하고, 오늘·이번주·이번달 실행 로드맵을 제시합니다.</p>
+      </div>
+      <div class="card">
+        <div class="grid3">
+          <div>
+            <label class="field-label">현재 구독자 수</label>
+            <input type="number" id="coachSubs" placeholder="예: 850">
+          </div>
+          <div>
+            <label class="field-label">주간 업로드 개수</label>
+            <input type="number" id="coachUploads" placeholder="예: 2">
+          </div>
+          <div>
+            <label class="field-label">채널 주제</label>
+            <input type="text" id="coachNiche" placeholder="예: 경제·자기계발">
+          </div>
+        </div>
+        <div style="height:10px"></div>
+        <label class="field-label">최근 고민 / 정체 지점 (선택)</label>
+        <textarea id="coachNote" rows="3" placeholder="예: 조회수는 나오는데 구독 전환이 안 됨"></textarea>
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnCoach"><span class="btn-label">성장 로드맵 받기</span></button>
+      </div>
+      <div id="coachResult"></div>
+    </section>
+
+    <!-- ---- 자동 리포트 ---- -->
+    <section id="tab-report" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Auto Report</div>
+        <h1 class="page-title">자동 리포트</h1>
+        <p class="page-sub">채널 스냅샷과 분석 히스토리를 모아 요약 리포트를 생성합니다. 브라우저 인쇄(Ctrl/Cmd+P)로 PDF 저장이 가능합니다.</p>
+      </div>
+      <div class="card" id="reportControls">
+        <div class="row">
+          <select id="reportPeriodSelect" style="max-width:220px;">
+            <option value="week">주간 리포트</option>
+            <option value="month">월간 리포트</option>
+          </select>
+          <button class="btn btn-primary" id="btnGenReport" style="flex:0 0 auto;"><span class="btn-label">리포트 생성하기</span></button>
+          <button class="btn btn-ghost" id="btnPrintReport" style="flex:0 0 auto;">인쇄 / PDF 저장</button>
+        </div>
+      </div>
+      <div id="reportResult"></div>
+    </section>
+
+    <!-- ---- 데이터센터 ---- -->
+    <section id="tab-archive" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Data Center · Content Lab</div>
+        <h1 class="page-title">데이터센터</h1>
+        <p class="page-sub">영상·조회수·CTR·스크립트·썸네일·태그·키워드·점수 등 모든 분석 결과가 이 브라우저 localStorage에 저장됩니다. 리스트/테이블/그래프로 확인하고 JSON으로 백업/복원할 수 있습니다.</p>
+      </div>
+      <div class="card">
+        <div class="row">
+          <input type="text" id="archiveSearchInput" placeholder="제목·키워드로 검색...">
+          <select id="archiveTypeFilter" style="max-width:160px;">
+            <option value="">전체 유형</option>
+            <option value="title">제목 분석</option>
+            <option value="titlegen">제목 생성</option>
+            <option value="script">대본 분석</option>
+            <option value="seo">SEO 분석</option>
+            <option value="algorithm">알고리즘 분석</option>
+            <option value="keyword">키워드 분석</option>
+            <option value="trend">트렌드 분석</option>
+            <option value="competitor">경쟁채널 분석</option>
+            <option value="audience">시청자 분석</option>
+            <option value="idea">아이디어</option>
+            <option value="coach">성장 코치</option>
+            <option value="strategy">성장 전략</option>
+            <option value="improve">AI 개선 제안</option>
+            <option value="channel">채널 조회</option>
+            <option value="channeldeep">채널 심층진단</option>
+            <option value="video">영상 분석</option>
+            <option value="thumbnail">썸네일 분석</option>
+            <option value="aieval">AI 종합 평가</option>
+            <option value="report">자동 리포트</option>
+            <option value="predictor">CTR·시청지속 예측</option>
+            <option value="abtest">A/B 테스트</option>
+          </select>
+        </div>
+        <div style="height:12px"></div>
+        <div class="row">
+          <button class="btn btn-ghost btn-sm" id="btnExportData">전체 백업 (JSON 다운로드)</button>
+          <button class="btn btn-ghost btn-sm" id="btnImportDataTrigger">백업 파일 복원</button>
+          <input type="file" id="btnImportData" accept="application/json" class="hidden">
+          <button class="btn btn-ghost btn-sm" id="btnClearData" style="border-color:var(--danger); color:var(--danger);">전체 삭제</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="margin-bottom:4px;">
+          <button class="btn btn-ghost btn-sm archive-view-btn active" data-view="list">리스트</button>
+          <button class="btn btn-ghost btn-sm archive-view-btn" data-view="table">테이블</button>
+          <button class="btn btn-ghost btn-sm archive-view-btn" data-view="graph">그래프로 확인</button>
+          <button class="btn btn-ghost btn-sm archive-view-btn" data-view="templates">⭐ 템플릿</button>
+        </div>
+        <div id="archiveList" style="margin-top:10px;"></div>
+        <div id="archiveTable" class="hidden" style="margin-top:10px;"></div>
+        <div id="archiveGraph" class="hidden" style="margin-top:10px;"></div>
+        <div id="archiveTemplates" class="hidden" style="margin-top:10px;"></div>
+      </div>
+    </section>
+
+    <!-- ---- 알고리즘 분석 ---- -->
+    <section id="tab-algorithm" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Algorithm Fit</div>
+        <h1 class="page-title">알고리즘 분석</h1>
+        <p class="page-sub">업로드 패턴과 참여 신호를 바탕으로 현재 콘텐츠가 유튜브 알고리즘과 얼마나 잘 맞는지 AI가 진단합니다. 채널 조회 탭에서 채널을 먼저 불러와 주세요.</p>
+      </div>
+      <div class="card">
+        <button class="btn btn-primary" id="btnAnalyzeAlgorithm"><span class="btn-label">알고리즘 적합도 분석하기</span></button>
+      </div>
+      <div id="algorithmResult"></div>
+    </section>
+
+    <!-- ---- AI 개선 제안 (채널 SWOT) ---- -->
+    <section id="tab-improve" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">AI Diagnosis</div>
+        <h1 class="page-title">AI 개선 제안</h1>
+        <p class="page-sub">채널 데이터를 바탕으로 AI가 강점·약점·문제점·개선점·예상 성장률·우선순위를 종합 진단합니다.</p>
+      </div>
+      <div class="card">
+        <button class="btn btn-primary" id="btnAnalyzeImprove"><span class="btn-label">채널 종합 진단 받기</span></button>
+      </div>
+      <div id="improveResult"></div>
+    </section>
+
+    <!-- ---- 성장 전략 ---- -->
+    <section id="tab-strategy" class="tab-panel hidden">
+      <div class="page-head">
+        <div class="eyebrow">Growth Strategy</div>
+        <h1 class="page-title">성장 전략</h1>
+        <p class="page-sub">단기 할일 목록(AI 성장 코치)과 달리, 3·6·12개월 단위 포지셔닝/콘텐츠 필러 전략과, 0~1,000명부터 100만명까지 구독자 단계별 실행 가이드(해야 할 것·하지 말 것·우선순위·로드맵)를 제시합니다.</p>
+      </div>
+      <div class="card">
+        <label class="field-label">채널 목표 (선택)</label>
+        <input type="text" id="strategyGoalInput" placeholder="예: 1년 안에 구독자 5만명, 강의/컨설팅으로 확장">
+        <div style="height:12px"></div>
+        <button class="btn btn-primary" id="btnAnalyzeStrategy"><span class="btn-label">성장 전략 생성하기</span></button>
+      </div>
+      <div id="strategyResult"></div>
+    </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ===== Settings Modal ===== -->
+<div class="modal-overlay hidden" id="settingsModal">
+  <div class="modal">
+    <h3>API 설정</h3>
+    <p class="hint">키는 서버로 전송되지 않고 이 브라우저의 localStorage에만 저장됩니다.</p>
+
+    <label class="field-label">OpenAI API 키</label>
+    <input type="password" id="apiKeyInput" placeholder="sk-...">
+    <p class="hint" style="margin-bottom:10px;"><a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--accent)">OpenAI 키 발급받기 ↗</a></p>
+    <label class="field-label">모델</label>
+    <select id="modelSelect">
+      <option value="gpt-4o-mini">gpt-4o-mini (빠르고 저렴)</option>
+      <option value="gpt-4o">gpt-4o (고품질)</option>
+      <option value="gpt-4.1-mini">gpt-4.1-mini</option>
+    </select>
+
+    <div style="height:16px; border-top:1px solid var(--border-soft); margin-top:16px;"></div>
+
+    <label class="field-label" style="margin-top:16px;">YouTube Data API 키 <span style="color:var(--text-muted); font-weight:400;">(선택)</span></label>
+    <input type="password" id="youtubeKeyInput" placeholder="AIza...">
+    <p class="hint"><a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:var(--accent)">Google Cloud Console에서 발급받기 ↗</a> — "YouTube Data API v3"를 사용 설정한 프로젝트의 API 키를 입력하세요. 채널 조회 탭에서 사용됩니다.</p>
+
+    <div style="height:18px"></div>
+    <div style="display:flex; gap:10px; justify-content:flex-end;">
+      <button class="btn btn-ghost" id="closeSettings">닫기</button>
+      <button class="btn btn-primary" id="saveSettings">저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   Night Reflection · AI YouTube Growth OS
+   Single-file PWA — vanilla JS, localStorage, OpenAI API
+   ========================================================= */
+
+const STORE_KEYS = {
+  apiKey:'nr_openai_key', model:'nr_openai_model', archive:'nr_archive', youtubeKey:'nr_youtube_key',
+  channelSnapshots:'nr_channel_snapshots', lastChannel:'nr_last_channel', lastCoach:'nr_last_coach', lastAiEval:'nr_last_ai_eval'
+};
+
+const Store = {
+  get(k, fallback=null){ try{ const v = localStorage.getItem(k); return v===null? fallback : v; }catch(e){ return fallback; } },
+  set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} },
+  getJSON(k, fallback=[]){ try{ const v = localStorage.getItem(k); return v? JSON.parse(v) : fallback; }catch(e){ return fallback; } },
+  setJSON(k, obj){ try{ localStorage.setItem(k, JSON.stringify(obj)); }catch(e){} }
+};
+
+function toast(msg){
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(()=> el.remove(), 3000);
+}
+
+function updateKeyStatus(){
+  const key = Store.get(STORE_KEYS.apiKey);
+  const dot = document.getElementById('keyDot');
+  const txt = document.getElementById('keyStatusText');
+  if(key){ dot.classList.add('ok'); txt.textContent = 'OpenAI 키 연결됨'; }
+  else{ dot.classList.remove('ok'); txt.textContent = 'OpenAI 키 미설정'; }
+
+  const ytKey = Store.get(STORE_KEYS.youtubeKey);
+  const ytDot = document.getElementById('ytKeyDot');
+  const ytTxt = document.getElementById('ytKeyStatusText');
+  if(ytKey){ ytDot.classList.add('ok'); ytTxt.textContent = 'YouTube 키 연결됨'; }
+  else{ ytDot.classList.remove('ok'); ytTxt.textContent = 'YouTube 키 미설정 (선택)'; }
+}
+
+/* ---------- Settings modal ---------- */
+const settingsModal = document.getElementById('settingsModal');
+document.getElementById('openSettings').onclick = ()=>{
+  document.getElementById('apiKeyInput').value = Store.get(STORE_KEYS.apiKey,'');
+  document.getElementById('modelSelect').value = Store.get(STORE_KEYS.model,'gpt-4o-mini');
+  document.getElementById('youtubeKeyInput').value = Store.get(STORE_KEYS.youtubeKey,'');
+  settingsModal.classList.remove('hidden');
+};
+document.getElementById('closeSettings').onclick = ()=> settingsModal.classList.add('hidden');
+document.getElementById('saveSettings').onclick = ()=>{
+  const key = document.getElementById('apiKeyInput').value.trim();
+  const model = document.getElementById('modelSelect').value;
+  const ytKey = document.getElementById('youtubeKeyInput').value.trim();
+  if(key) Store.set(STORE_KEYS.apiKey, key);
+  Store.set(STORE_KEYS.model, model);
+  if(ytKey) Store.set(STORE_KEYS.youtubeKey, ytKey);
+  else Store.set(STORE_KEYS.youtubeKey, '');
+  updateKeyStatus();
+  settingsModal.classList.add('hidden');
+  toast('설정이 저장되었습니다');
+};
+updateKeyStatus();
+if(!Store.get(STORE_KEYS.apiKey)){ setTimeout(()=> settingsModal.classList.remove('hidden'), 400); }
+
+/* ---------- Tab navigation ---------- */
+document.querySelectorAll('.nav-btn[data-tab]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav-btn[data-tab]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.add('hidden'));
+    document.getElementById('tab-'+tab).classList.remove('hidden');
+    if(tab==='archive') renderArchive();
+    if(tab==='dashboard') renderDashboardTab();
+  });
+});
+
+/* ---------- Core GPT caller ---------- */
+async function callGPT(systemPrompt, userPrompt, opts={}){
+  const key = Store.get(STORE_KEYS.apiKey);
+  const model = Store.get(STORE_KEYS.model,'gpt-4o-mini');
+  if(!key){ settingsModal.classList.remove('hidden'); throw new Error('API 키를 먼저 설정해주세요'); }
+
+  const body = {
+    model,
+    messages:[
+      { role:'system', content: systemPrompt },
+      { role:'user', content: opts.imageDataUrl ? [
+          { type:'text', text:userPrompt },
+          { type:'image_url', image_url:{ url: opts.imageDataUrl } }
+        ] : userPrompt }
+    ],
+    temperature: opts.temperature ?? 0.8
+  };
+  if(opts.json){ body.response_format = { type:'json_object' }; }
+  if(opts.maxTokens){ body.max_tokens = opts.maxTokens; }
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions',{
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+key },
+    body: JSON.stringify(body)
+  });
+  if(!res.ok){
+    const errText = await res.text();
+    throw new Error('API 오류 ('+res.status+'): '+errText.slice(0,200));
+  }
+  const data = await res.json();
+  const content = data.choices?.[0]?.message?.content ?? '';
+  if(opts.json){
+    try{ return JSON.parse(content); }
+    catch(e){ throw new Error('응답을 JSON으로 해석하지 못했습니다.'); }
+  }
+  return content;
+}
+
+function setLoading(btn, isLoading, label){
+  const span = btn.querySelector('.btn-label');
+  if(isLoading){
+    btn.disabled = true;
+    btn.dataset.origLabel = span.textContent;
+    span.innerHTML = '';
+    const sp = document.createElement('span'); sp.className='spinner';
+    span.appendChild(sp);
+    span.append(' 생성 중...');
+  } else {
+    btn.disabled = false;
+    span.textContent = label || btn.dataset.origLabel || span.textContent;
+  }
+}
+
+function archiveSave(type, title, payload){
+  const list = Store.getJSON(STORE_KEYS.archive, []);
+  list.unshift({ id: Date.now(), type, title, payload, date: new Date().toISOString() });
+  Store.setJSON(STORE_KEYS.archive, list.slice(0,300));
+}
+
+const TYPE_LABEL = {
+  title:'제목 분석', titlegen:'제목 생성', script:'대본 분석', idea:'아이디어', coach:'성장 코치',
+  channel:'채널 조회', video:'영상 분석', thumbnail:'썸네일 분석', seo:'SEO 분석',
+  keyword:'키워드 분석', trend:'트렌드 분석', competitor:'경쟁채널 분석', audience:'시청자 분석', report:'자동 리포트',
+  algorithm:'알고리즘 분석', improve:'AI 개선 제안', strategy:'성장 전략', aieval:'AI 종합 평가', channeldeep:'채널 심층진단',
+  predictor:'CTR·시청지속 예측', abtest:'A/B 테스트'
+};
+
+function renderArchive(){
+  const list = Store.getJSON(STORE_KEYS.archive, []);
+  const el = document.getElementById('archiveList');
+  const searchEl = document.getElementById('archiveSearchInput');
+  const filterEl = document.getElementById('archiveTypeFilter');
+  const q = (searchEl?.value || '').trim().toLowerCase();
+  const typeFilter = filterEl?.value || '';
+
+  const filtered = list.filter(item=>{
+    if(typeFilter && item.type !== typeFilter) return false;
+    if(q && !String(item.title).toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  if(!filtered.length){
+    el.innerHTML = `<div class="empty">${list.length? '검색 결과가 없습니다.' : '아직 저장된 분석이 없습니다. 분석을 실행하면 여기에 자동 기록됩니다.'}</div>`;
+  } else {
+    const templates = Store.getJSON(TEMPLATE_KEY, []);
+    const templateIds = new Set(templates.map(t=>t.id));
+    el.innerHTML = filtered.map(item=>{
+      const d = new Date(item.date);
+      const dateStr = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      const isTemplate = templateIds.has(item.id);
+      return `<div class="idea-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+          <div class="imeta"><span class="pill gold">${TYPE_LABEL[item.type]||item.type}</span> ${dateStr}</div>
+          <button class="archive-star-btn" data-id="${item.id}" title="템플릿으로 저장" style="background:none; border:none; cursor:pointer; font-size:16px; line-height:1; color:${isTemplate?'var(--accent)':'var(--text-muted)'};">${isTemplate?'★':'☆'}</button>
+        </div>
+        <div class="ititle">${escapeHTML(item.title)}</div>
+      </div>`;
+    }).join('');
+    el.querySelectorAll('.archive-star-btn').forEach(b=>{
+      b.onclick = ()=>{
+        const id = Number(b.dataset.id);
+        const item = list.find(x=>x.id===id);
+        if(item) toggleTemplate(item);
+        renderArchive();
+      };
+    });
+  }
+
+  renderArchiveTable(filtered);
+  renderArchiveGraph(filtered);
+  renderArchiveTemplates();
+}
+document.getElementById('archiveSearchInput')?.addEventListener('input', renderArchive);
+document.getElementById('archiveTypeFilter')?.addEventListener('change', renderArchive);
+
+/* 저장된 payload에서 대표 핵심 점수 하나를 뽑아낸다 (유형별 필드명이 달라서 흔한 후보를 순서대로 탐색) */
+function extractScore(item){
+  const p = item.payload || {};
+  const candidates = [
+    p.totalScore, p.data?.totalScore, p.gpt?.totalScore,
+    p.gpt?.immersionScore, p.data?.immersionScore, p.immersionScore,
+    p.algorithmScore, p.data?.algorithmScore,
+    p.data?.growthScore, p.growthScore,
+    p.brandConsistencyScore,
+    p.gpt?.expectedRetentionPercent, p.expectedRetentionPercent,
+    p.scores?.예상CTR, p.data?.scores?.예상CTR,
+    p.scores?.totalScore
+  ];
+  const found = candidates.find(v=> typeof v==='number' && !isNaN(v));
+  return found!==undefined ? Math.round(found) : null;
+}
+
+/* 저장된 payload에서 대표 조회수/썸네일/태그/키워드 요약 정보를 추출 (표시용, 유형별로 다름) */
+function extractSummaryFields(item){
+  const p = item.payload || {};
+  const views = p.views ?? p.bundle?.totalViews ?? p.data?.totalViews ?? null;
+  const tags = p.tags ?? p.data?.tags ?? null;
+  const keyword = item.type==='keyword' ? item.title : null;
+  return { views, tags, keyword };
+}
+
+function renderArchiveTable(filtered){
+  const el = document.getElementById('archiveTable');
+  if(!el) return;
+  if(!filtered.length){ el.innerHTML = `<div class="empty">표시할 데이터가 없습니다.</div>`; return; }
+  el.innerHTML = `<p style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">제목을 클릭하면 동일 항목의 변경 이력(과거 분석 기록)을 볼 수 있습니다.</p>
+  <div style="overflow-x:auto;">
+    <table class="title-table">
+      <thead><tr><th>유형</th><th>제목/영상/키워드</th><th>날짜</th><th>조회수</th><th>태그</th><th>핵심 점수</th></tr></thead>
+      <tbody>
+        ${filtered.map((item,idx)=>{
+          const d = new Date(item.date);
+          const dateStr = `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+          const score = extractScore(item);
+          const { views, tags } = extractSummaryFields(item);
+          return `<tr>
+            <td><span class="pill" style="margin:0;">${TYPE_LABEL[item.type]||item.type}</span></td>
+            <td class="ttl"><span class="archive-history-trigger" data-idx="${idx}" style="cursor:pointer; text-decoration:underline dotted;">${escapeHTML(item.title)}</span></td>
+            <td class="score">${dateStr}</td>
+            <td class="score">${views!==null? Number(views).toLocaleString() : '-'}</td>
+            <td class="score">${tags? (Array.isArray(tags)? tags.length+'개':'-') : '-'}</td>
+            <td class="score">${score!==null? score : '-'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>
+  <div id="archiveHistoryPanel" style="margin-top:12px;"></div>`;
+
+  el.querySelectorAll('.archive-history-trigger').forEach(t=>{
+    t.onclick = ()=>{
+      const item = filtered[Number(t.dataset.idx)];
+      renderItemHistory(item.title);
+    };
+  });
+}
+
+function renderItemHistory(title){
+  const panel = document.getElementById('archiveHistoryPanel');
+  const fullList = Store.getJSON(STORE_KEYS.archive, []);
+  const history = fullList.filter(x=> x.title===title).sort((a,b)=> new Date(a.date)-new Date(b.date));
+  if(!panel) return;
+  panel.innerHTML = `<div class="card" style="background:var(--bg-input);">
+    <div class="card-title">변경 이력 · ${escapeHTML(title)} <span class="badge">${history.length}건</span></div>
+    ${history.map((h,i)=>{
+      const d = new Date(h.date);
+      const score = extractScore(h);
+      return `<div class="idea-card">
+        <div class="imeta">#${i+1} · ${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</div>
+        <div class="ihook">${score!==null? '핵심 점수: '+score : TYPE_LABEL[h.type]+' 기록'}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+function renderArchiveGraph(filtered){
+  const el = document.getElementById('archiveGraph');
+  if(!el) return;
+  if(!filtered.length){ el.innerHTML = `<div class="empty">표시할 데이터가 없습니다.</div>`; return; }
+
+  // 최근 14일 활동량 (일별 건수)
+  const days = [];
+  for(let i=13; i>=0; i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    days.push(d.toISOString().slice(0,10));
+  }
+  const countByDay = {};
+  days.forEach(d=> countByDay[d]=0);
+  filtered.forEach(item=>{
+    const key = new Date(item.date).toISOString().slice(0,10);
+    if(countByDay[key]!==undefined) countByDay[key]++;
+  });
+  const maxCount = Math.max(1, ...Object.values(countByDay));
+
+  // 점수가 있는 항목들의 시간순 점수 추이
+  const scored = filtered.map(item=>({ date:item.date, score:extractScore(item) }))
+    .filter(x=> x.score!==null).sort((a,b)=> new Date(a.date)-new Date(b.date));
+
+  const barsHTML = days.map(d=>{
+    const c = countByDay[d];
+    const h = Math.round((c/maxCount)*80);
+    const label = d.slice(5).replace('-','.');
+    return `<div style="display:flex; flex-direction:column; align-items:center; gap:4px; flex:1;">
+      <div style="font-size:9px; color:var(--text-muted); font-family:var(--font-mono);">${c||''}</div>
+      <div style="width:100%; max-width:18px; height:${h}px; min-height:${c>0?'3px':'0'}; background:linear-gradient(180deg,var(--accent),var(--teal)); border-radius:3px 3px 0 0;"></div>
+      <div style="font-size:8.5px; color:var(--text-muted); font-family:var(--font-mono); writing-mode:vertical-rl; height:26px;">${label}</div>
+    </div>`;
+  }).join('');
+
+  let scoreChartHTML = `<div class="empty">점수가 기록된 분석이 아직 없습니다.</div>`;
+  if(scored.length >= 2){
+    const W=700,H=160,padL=30,padR=10,padT=10,padB=10;
+    const vals = scored.map(s=>s.score);
+    const min=Math.min(...vals), max=Math.max(...vals), range=(max-min)||1;
+    const stepX=(W-padL-padR)/(scored.length-1);
+    const pts = scored.map((s,i)=>({ x:padL+i*stepX, y:padT+(1-(s.score-min)/range)*(H-padT-padB) }));
+    const pathD = pts.map((p,i)=>(i===0?'M':'L')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+    scoreChartHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%; height:auto;">
+      <path d="${pathD}" fill="none" stroke="var(--teal)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      ${pts.map(p=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="var(--teal)" stroke="var(--bg-card)" stroke-width="1.5"/>`).join('')}
+      <text x="${padL}" y="${padT+2}" font-size="9" fill="var(--text-muted)" font-family="var(--font-mono)">${max}</text>
+      <text x="${padL}" y="${H-padB}" font-size="9" fill="var(--text-muted)" font-family="var(--font-mono)">${min}</text>
+    </svg>`;
+  }
+
+  el.innerHTML = `
+    <div class="card-title" style="margin-bottom:10px;">최근 14일 활동량</div>
+    <div style="display:flex; align-items:flex-end; gap:4px; height:130px; padding:0 4px;">${barsHTML}</div>
+    <div class="card-title" style="margin:20px 0 10px;">핵심 점수 추이 <span class="badge">SCORE TREND</span></div>
+    ${scoreChartHTML}
+  `;
+}
+
+/* ---- 콘텐츠 템플릿 라이브러리 (성공 패턴을 재사용 가능한 템플릿으로 저장) ---- */
+const TEMPLATE_KEY = 'nr_templates';
+function toggleTemplate(item){
+  const templates = Store.getJSON(TEMPLATE_KEY, []);
+  const idx = templates.findIndex(t=>t.id===item.id);
+  if(idx>=0){ templates.splice(idx,1); toast('템플릿에서 제거했습니다'); }
+  else{ templates.unshift(item); toast('템플릿으로 저장했습니다'); }
+  Store.setJSON(TEMPLATE_KEY, templates.slice(0,200));
+}
+function renderArchiveTemplates(){
+  const el = document.getElementById('archiveTemplates');
+  if(!el) return;
+  const templates = Store.getJSON(TEMPLATE_KEY, []);
+  if(!templates.length){
+    el.innerHTML = `<div class="empty">아직 저장된 템플릿이 없습니다. 리스트 뷰에서 ☆ 별표를 눌러 성공한 제목/대본/아이디어를 템플릿으로 저장해보세요.</div>`;
+    return;
+  }
+  el.innerHTML = `<p style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">재사용 가능한 성공 패턴 템플릿 ${templates.length}개</p>` +
+    templates.map(item=>{
+      const d = new Date(item.date);
+      const score = extractScore(item);
+      return `<div class="idea-card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+          <div class="imeta"><span class="pill gold">${TYPE_LABEL[item.type]||item.type}</span> ${d.getMonth()+1}/${d.getDate()}</div>
+          <button class="archive-star-btn" data-id="${item.id}" title="템플릿에서 제거" style="background:none; border:none; cursor:pointer; font-size:16px; line-height:1; color:var(--accent);">★</button>
+        </div>
+        <div class="ititle">${escapeHTML(item.title)}</div>
+        ${score!==null? `<div class="imeta" style="margin-top:4px;">핵심 점수: ${score}</div>` : ''}
+      </div>`;
+    }).join('');
+  el.querySelectorAll('.archive-star-btn').forEach(b=>{
+    b.onclick = ()=>{
+      const id = Number(b.dataset.id);
+      const item = templates.find(x=>x.id===id);
+      if(item) toggleTemplate(item);
+      renderArchive();
+    };
+  });
+}
+
+document.querySelectorAll('.archive-view-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.archive-view-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const view = btn.dataset.view;
+    document.getElementById('archiveList').classList.toggle('hidden', view!=='list');
+    document.getElementById('archiveTable').classList.toggle('hidden', view!=='table');
+    document.getElementById('archiveGraph').classList.toggle('hidden', view!=='graph');
+    document.getElementById('archiveTemplates').classList.toggle('hidden', view!=='templates');
+  });
+});
+
+/* ---- 데이터센터: 백업 / 복원 / 삭제 ---- */
+document.getElementById('btnExportData').onclick = ()=>{
+  const backup = {};
+  Object.keys(localStorage).filter(k=>k.startsWith('nr_')).forEach(k=>{ backup[k] = localStorage.getItem(k); });
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `night-reflection-backup-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  toast('백업 파일을 다운로드했습니다');
+};
+document.getElementById('btnImportDataTrigger').onclick = ()=> document.getElementById('btnImportData').click();
+document.getElementById('btnImportData').onchange = async (e)=>{
+  const file = e.target.files?.[0];
+  if(!file) return;
+  try{
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    Object.entries(parsed).forEach(([k,v])=>{ if(k.startsWith('nr_')) localStorage.setItem(k, v); });
+    toast('복원 완료. 새로고침합니다...');
+    setTimeout(()=> location.reload(), 900);
+  }catch(err){ toast('복원 실패: 올바른 백업 파일이 아닙니다'); }
+};
+document.getElementById('btnClearData').onclick = ()=>{
+  if(!confirm('저장된 모든 분석 데이터를 삭제합니다. 계속할까요? (API 키는 유지됩니다)')) return;
+  Object.keys(localStorage).filter(k=>k.startsWith('nr_') && k!==STORE_KEYS.apiKey && k!==STORE_KEYS.youtubeKey && k!==STORE_KEYS.model).forEach(k=> localStorage.removeItem(k));
+  renderArchive();
+  toast('데이터가 삭제되었습니다');
+};
+
+function escapeHTML(str){
+  return String(str).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+function scoreBar(label, value){
+  const v = Math.max(0, Math.min(100, Number(value)||0));
+  return `<div class="metric">
+    <div class="metric-top"><span>${escapeHTML(label)}</span><b>${v}</b></div>
+    <div class="bar-track"><div class="bar-fill" style="width:${v}%"></div></div>
+  </div>`;
+}
+
+/* =========================================================
+   0) 채널 조회 (YouTube Data API v3)
+   ========================================================= */
+async function ytGet(path, params){
+  const key = Store.get(STORE_KEYS.youtubeKey);
+  if(!key){ settingsModal.classList.remove('hidden'); throw new Error('YouTube API 키를 먼저 설정해주세요 (설정 > YouTube Data API 키)'); }
+  const qs = new URLSearchParams({...params, key});
+  const res = await fetch(`https://www.googleapis.com/youtube/v3/${path}?${qs.toString()}`);
+  const data = await res.json();
+  if(!res.ok){
+    const msg = data?.error?.message || res.statusText;
+    throw new Error('YouTube API 오류: '+msg);
+  }
+  return data;
+}
+
+function parseChannelQuery(raw){
+  let q = raw.trim();
+  // full URL 형태 정리
+  const urlMatch = q.match(/youtube\.com\/(channel\/|@|c\/|user\/)?([^\/\?&]+)/i);
+  if(urlMatch){ q = (urlMatch[1]==='@'? '@':'') + urlMatch[2]; if(urlMatch[1]==='@') q = '@'+urlMatch[2]; else if(!urlMatch[1]) q = urlMatch[2]; }
+  if(/^UC[a-zA-Z0-9_-]{20,}$/.test(q)) return { type:'id', value:q };
+  if(q.startsWith('@')) return { type:'handle', value:q };
+  return { type:'search', value:q };
+}
+
+async function resolveChannelId(raw){
+  const parsed = parseChannelQuery(raw);
+  if(parsed.type==='id') return parsed.value;
+  if(parsed.type==='handle'){
+    const data = await ytGet('channels', { part:'id', forHandle: parsed.value });
+    if(data.items?.[0]) return data.items[0].id;
+    // fallback to search
+  }
+  const searchData = await ytGet('search', { part:'snippet', type:'channel', q: parsed.value, maxResults:1 });
+  if(searchData.items?.[0]) return searchData.items[0].snippet.channelId || searchData.items[0].id.channelId;
+  throw new Error('채널을 찾을 수 없습니다. 핸들(@이름), 채널 URL, 채널명을 확인해주세요.');
+}
+
+let lastChannelData = null;
+
+/* 채널ID -> 채널 통계+최근영상 번들. 채널조회/경쟁채널분석/대시보드가 공유한다. */
+async function fetchChannelBundle(channelId){
+  const chData = await ytGet('channels', { part:'snippet,statistics,contentDetails', id: channelId });
+  const ch = chData.items?.[0];
+  if(!ch) throw new Error('채널 정보를 불러오지 못했습니다.');
+
+  const uploadsPlaylist = ch.contentDetails?.relatedPlaylists?.uploads;
+  let videos = [];
+  if(uploadsPlaylist){
+    const plData = await ytGet('playlistItems', { part:'snippet', playlistId: uploadsPlaylist, maxResults:6 });
+    const videoIds = (plData.items||[]).map(it=> it.snippet.resourceId.videoId).filter(Boolean);
+    if(videoIds.length){
+      const vidData = await ytGet('videos', { part:'snippet,statistics,contentDetails', id: videoIds.join(',') });
+      videos = (vidData.items||[]).map(v=>({
+        title:v.snippet.title, views:Number(v.statistics.viewCount||0),
+        likes:Number(v.statistics.likeCount||0), comments:Number(v.statistics.commentCount||0),
+        publishedAt:v.snippet.publishedAt, categoryId:v.snippet.categoryId,
+        thumb:v.snippet.thumbnails?.medium?.url || v.snippet.thumbnails?.default?.url,
+        durationSec: isoDurationToSeconds(v.contentDetails?.duration)
+      }));
+    }
+  }
+  const stats = ch.statistics || {};
+  return {
+    channelId, title: ch.snippet.title, thumb: ch.snippet.thumbnails?.medium?.url,
+    subs: Number(stats.subscriberCount||0), totalViews: Number(stats.viewCount||0),
+    videoCount: Number(stats.videoCount||0), videos
+  };
+}
+
+/* 대시보드용 일별 스냅샷 저장 (오늘 대비 증가치 계산에 사용) */
+function saveChannelSnapshot(bundle){
+  const snaps = Store.getJSON(STORE_KEYS.channelSnapshots, []);
+  const today = new Date().toISOString().slice(0,10);
+  const idx = snaps.findIndex(s=> s.channelId===bundle.channelId && s.date===today);
+  const entry = { channelId:bundle.channelId, title:bundle.title, date:today, subs:bundle.subs, totalViews:bundle.totalViews, videoCount:bundle.videoCount };
+  if(idx>=0) snaps[idx] = entry; else snaps.push(entry);
+  Store.setJSON(STORE_KEYS.channelSnapshots, snaps.slice(-200));
+  Store.setJSON(STORE_KEYS.lastChannel, bundle);
+  if(typeof refreshProfileChip === 'function') refreshProfileChip();
+}
+
+/* 채널 스냅샷 기반 실측 지표: 성장률 / 증가속도 */
+function computeGrowthMetrics(channelId){
+  const snaps = Store.getJSON(STORE_KEYS.channelSnapshots, [])
+    .filter(s=> s.channelId===channelId).sort((a,b)=> a.date.localeCompare(b.date));
+  if(snaps.length < 2) return { available:false, snapCount:snaps.length };
+  const first = snaps[0], last = snaps[snaps.length-1];
+  const days = Math.max(1, (new Date(last.date) - new Date(first.date)) / (1000*60*60*24));
+  const growthRatePercent = first.subs>0 ? (((last.subs - first.subs)/first.subs)*100) : 0;
+  const subVelocity = (last.subs - first.subs) / days;
+  const viewVelocity = (last.totalViews - first.totalViews) / days;
+  return { available:true, days:Math.round(days), growthRatePercent, subVelocity, viewVelocity };
+}
+
+/* 최근 업로드 목록에서 업로드 빈도 / 업로드 시간대 실측 */
+function computeUploadPattern(videos){
+  if(!videos || videos.length < 2) return { avgGapDays:null, commonHour:null };
+  const dates = videos.map(v=> new Date(v.publishedAt).getTime()).sort((a,b)=> b-a);
+  const gaps = [];
+  for(let i=0;i<dates.length-1;i++) gaps.push((dates[i]-dates[i+1])/(1000*60*60*24));
+  const avgGapDays = gaps.reduce((a,b)=>a+b,0) / gaps.length;
+  const hourCounts = {};
+  videos.forEach(v=>{ const h = new Date(v.publishedAt).getHours(); hourCounts[h] = (hourCounts[h]||0)+1; });
+  const commonHour = Object.entries(hourCounts).sort((a,b)=> b[1]-a[1])[0]?.[0];
+  return { avgGapDays, commonHour: commonHour!==undefined? Number(commonHour) : null };
+}
+
+/* 채널 대표 카테고리 조회 (최근 영상 중 가장 흔한 categoryId 기준) */
+async function fetchTopCategoryName(videos){
+  const ids = (videos||[]).map(v=>v.categoryId).filter(Boolean);
+  if(!ids.length) return null;
+  const counts = {};
+  ids.forEach(id=>{ counts[id] = (counts[id]||0)+1; });
+  const topId = Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+  try{
+    const data = await ytGet('videoCategories', { part:'snippet', id: topId, regionCode:'KR' });
+    return data.items?.[0]?.snippet?.title || null;
+  }catch(e){ return null; }
+}
+
+document.getElementById('btnFetchChannel').onclick = async ()=>{
+  const btn = document.getElementById('btnFetchChannel');
+  const raw = document.getElementById('channelQueryInput').value.trim();
+  const resultEl = document.getElementById('channelResult');
+  if(!raw){ toast('채널 정보를 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const channelId = await resolveChannelId(raw);
+    lastChannelData = await fetchChannelBundle(channelId);
+    const videos = lastChannelData.videos;
+    saveChannelSnapshot(lastChannelData); // 스냅샷을 먼저 저장해야 성장률 계산에 오늘자 데이터가 반영됨
+
+    const growth = computeGrowthMetrics(channelId);
+    const uploadPattern = computeUploadPattern(videos);
+
+    resultEl.innerHTML = `<div class="card">
+      <div style="display:flex; gap:14px; align-items:center; margin-bottom:18px;">
+        ${lastChannelData.thumb? `<img src="${lastChannelData.thumb}" style="width:56px;height:56px;border-radius:50%;border:1px solid var(--border-soft);">`:''}
+        <div>
+          <div style="font-family:var(--font-display); font-weight:700; font-size:16px;">${escapeHTML(lastChannelData.title)}</div>
+          <div style="font-size:12px; color:var(--text-muted);">채널 ID: ${escapeHTML(channelId)}</div>
+        </div>
+      </div>
+      <div class="grid3">
+        <div class="idea-card"><div class="imeta">구독자</div><div class="ititle" style="font-family:var(--font-mono);">${lastChannelData.subs.toLocaleString()}</div></div>
+        <div class="idea-card"><div class="imeta">총 조회수</div><div class="ititle" style="font-family:var(--font-mono);">${lastChannelData.totalViews.toLocaleString()}</div></div>
+        <div class="idea-card"><div class="imeta">영상 수</div><div class="ititle" style="font-family:var(--font-mono);">${lastChannelData.videoCount.toLocaleString()}</div></div>
+      </div>
+      <div style="margin-top:8px;">
+        <button class="btn btn-ghost btn-sm" id="btnApplyToCoach">이 데이터로 성장 코치 채우기 →</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">채널 심층 지표 <span class="badge">MEASURED</span></div>
+      <div class="grid3">
+        <div class="idea-card stat-card">
+          <div class="imeta">채널 성장률</div>
+          ${growth.available
+            ? `<div class="stat-value" style="font-size:18px; color:${growth.growthRatePercent>=0?'var(--teal)':'var(--danger)'};">${growth.growthRatePercent>=0?'+':''}${growth.growthRatePercent.toFixed(2)}%</div><div class="stat-sub">최근 ${growth.days}일 구간</div>`
+            : `<div class="stat-locked">스냅샷 2회 이상 필요 (현재 ${growth.snapCount}회) · 다음날 다시 조회해주세요</div>`}
+        </div>
+        <div class="idea-card stat-card">
+          <div class="imeta">구독자 증가속도</div>
+          ${growth.available
+            ? `<div class="stat-value" style="font-size:18px;">${growth.subVelocity>=0?'+':''}${growth.subVelocity.toFixed(1)}<span style="font-size:11px; color:var(--text-muted);">/일</span></div>`
+            : `<div class="stat-locked">데이터 부족</div>`}
+        </div>
+        <div class="idea-card stat-card">
+          <div class="imeta">조회수 증가속도</div>
+          ${growth.available
+            ? `<div class="stat-value" style="font-size:18px;">${growth.viewVelocity>=0?'+':''}${Math.round(growth.viewVelocity).toLocaleString()}<span style="font-size:11px; color:var(--text-muted);">/일</span></div>`
+            : `<div class="stat-locked">데이터 부족</div>`}
+        </div>
+        <div class="idea-card stat-card">
+          <div class="imeta">업로드 빈도</div>
+          <div class="stat-value" style="font-size:18px;">${uploadPattern.avgGapDays!==null? uploadPattern.avgGapDays.toFixed(1)+'일마다' : '데이터 부족'}</div>
+          <div class="stat-sub">최근 업로드 간격 평균</div>
+        </div>
+        <div class="idea-card stat-card">
+          <div class="imeta">업로드 시간대</div>
+          <div class="stat-value" style="font-size:18px;">${uploadPattern.commonHour!==null? uploadPattern.commonHour+'시경' : '데이터 부족'}</div>
+          <div class="stat-sub">가장 잦은 업로드 시각(UTC 기준)</div>
+        </div>
+        <div class="idea-card stat-card">
+          <div class="imeta">카테고리</div>
+          <div class="stat-value" style="font-size:18px;" id="channelCategoryValue">불러오는 중...</div>
+        </div>
+        <div class="idea-card stat-card">
+          <div class="imeta">CTR</div>
+          <div class="stat-locked">비공개 데이터 (YouTube 스튜디오 OAuth 전용)</div>
+        </div>
+        <div class="idea-card stat-card">
+          <div class="imeta">평균 시청시간</div>
+          <div class="stat-locked">비공개 데이터</div>
+        </div>
+        <div class="idea-card stat-card">
+          <div class="imeta">재방문율</div>
+          <div class="stat-locked">비공개 데이터</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">AI 심층 진단 <span class="badge">브랜드 · 수익성</span></div>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">브랜드 일관성은 최근 제목 패턴을 AI가 평가한 결과이며, 수익성은 공개된 일반 RPM 벤치마크를 이용한 매우 대략적인 추정 범위입니다. 실제 수익은 광고 단가·시청자 지역·카테고리에 따라 크게 달라질 수 있습니다.</p>
+      <div id="channelDeepResult"><div class="empty">아래 버튼으로 AI 심층 진단을 받아보세요.</div></div>
+      <div style="margin-top:10px;">
+        <button class="btn btn-ghost btn-sm" id="btnChannelDeep">AI 심층 진단 받기 →</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">최근 업로드 <span class="badge">LATEST</span></div>
+      ${videos.length? videos.map(v=>{
+        const d = new Date(v.publishedAt);
+        return `<div class="idea-card">
+          <div class="ititle">${escapeHTML(v.title)}</div>
+          <div class="imeta">${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} · 조회수 ${v.views.toLocaleString()} · 좋아요 ${v.likes.toLocaleString()}</div>
+        </div>`;
+      }).join('') : `<div class="empty">최근 업로드 영상을 불러오지 못했습니다.</div>`}
+    </div>`;
+
+    document.getElementById('btnApplyToCoach').onclick = ()=>{
+      document.getElementById('coachSubs').value = lastChannelData.subs;
+      document.querySelector('.nav-btn[data-tab="coach"]').click();
+      toast('구독자 수를 성장 코치 탭에 적용했습니다');
+    };
+    document.getElementById('btnChannelDeep').onclick = ()=> runChannelDeepDiagnosis(lastChannelData);
+
+    fetchTopCategoryName(videos).then(name=>{
+      const catEl = document.getElementById('channelCategoryValue');
+      if(catEl) catEl.textContent = name || '알 수 없음';
+    });
+
+    archiveSave('channel', lastChannelData.title, lastChannelData);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+const CHANNEL_DEEP_SYSTEM = `너는 유튜브 브랜딩·수익화 컨설턴트다. 실제 수익 데이터는 제공되지 않으므로 공개된 일반적인 유튜브 RPM 벤치마크를 참고한 매우 대략적인 추정치임을 전제하고 JSON으로만 응답한다.
+{
+ "brandConsistencyScore":0-100,
+ "brandConsistencyComment":"제목 패턴/톤 기준 브랜드 일관성 평가 2~3문장",
+ "monetizationEstimateRange":"예상 월 광고수익 대략 범위 (예: 대략 30만원~150만원, 매우 추정치)",
+ "monetizationCaveat":"이 추정이 왜 부정확할 수 있는지 1~2문장"
+}`;
+async function runChannelDeepDiagnosis(bundle){
+  const btn = document.getElementById('btnChannelDeep');
+  const resultEl = document.getElementById('channelDeepResult');
+  setLoading(btn, true);
+  try{
+    const titlesStr = (bundle.videos||[]).map(v=>'- '+v.title).join('\n');
+    const data = await callGPT(CHANNEL_DEEP_SYSTEM, `채널: ${bundle.title}\n구독자: ${bundle.subs}\n총 조회수: ${bundle.totalViews}\n영상 수: ${bundle.videoCount}\n최근 영상 제목:\n${titlesStr}`, {json:true, temperature:0.6});
+    resultEl.innerHTML = `
+      ${scoreBar('브랜드 일관성', data.brandConsistencyScore)}
+      <div class="result-block" style="border-top:none; margin-top:8px; padding-top:0;"><p>${escapeHTML(data.brandConsistencyComment||'')}</p></div>
+      <div class="result-block"><h4>수익성 추정 (참고용)</h4><p style="color:var(--accent); font-weight:600;">${escapeHTML(data.monetizationEstimateRange||'')}</p><p style="margin-top:6px; font-size:12px;">${escapeHTML(data.monetizationCaveat||'')}</p></div>
+    `;
+    archiveSave('channeldeep', bundle.title+' AI 심층진단', data);
+  }catch(e){
+    resultEl.innerHTML = `<p style="color:var(--danger)">${escapeHTML(e.message)}</p>`;
+  }finally{ setLoading(btn, false, 'AI 심층 진단 받기 →'); }
+}
+
+/* =========================================================
+   1) 제목 분석 & 채점
+   ========================================================= */
+const TITLE_SYSTEM = `너는 세계 최고 수준의 유튜브 SEO/CTR 전문가다. 한국어 유튜브 제목을 분석해 JSON으로만 응답한다.
+JSON 스키마:
+{
+ "scores": {"감정점수":0-100, "호기심":0-100, "긴장감":0-100, "검색성":0-100, "예상CTR":0-100, "예상조회수잠재력":0-100},
+ "length": 제목 글자수(정수),
+ "powerWords": ["제목에서 발견한 파워워드"],
+ "usesNumber": true/false,
+ "totalScore": 0-100 (종합 점수),
+ "verdict": "한 줄 총평",
+ "improvements": ["구체적 개선 제안 2~3개"]
+}
+"예상조회수잠재력"은 실제 조회수 숫자가 아니라 이 제목이 조회수를 얼마나 끌어올릴 잠재력이 있는지에 대한 상대 점수다. 설명 없이 JSON만 출력한다.`;
+
+document.getElementById('btnScoreTitle').onclick = async ()=>{
+  const btn = document.getElementById('btnScoreTitle');
+  const title = document.getElementById('titleInput').value.trim();
+  const resultEl = document.getElementById('titleScoreResult');
+  if(!title){ toast('제목을 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(TITLE_SYSTEM, `제목: "${title}"`, {json:true, temperature:0.4});
+    resultEl.innerHTML = `
+      <div class="result-block">
+        <div class="grid2">
+          <div>
+            ${scoreBar('감정 점수', data.scores?.감정점수)}
+            ${scoreBar('호기심', data.scores?.호기심)}
+            ${scoreBar('긴장감', data.scores?.긴장감)}
+            ${scoreBar('검색성', data.scores?.검색성)}
+          </div>
+          <div>
+            ${scoreBar('예상 CTR', data.scores?.예상CTR)}
+            ${scoreBar('예상 조회수 잠재력', data.scores?.예상조회수잠재력)}
+            ${scoreBar('종합 점수', data.totalScore)}
+          </div>
+        </div>
+        <h4 style="margin-top:14px;">총평</h4>
+        <p>${escapeHTML(data.verdict||'')}</p>
+        <h4>개선 제안</h4>
+        <p>${(data.improvements||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p>
+        <div style="margin-top:10px;">
+          <span class="pill">글자수 ${data.length ?? '-'}</span>
+          <span class="pill">${data.usesNumber? '숫자 사용 O':'숫자 사용 X'}</span>
+          ${(data.powerWords||[]).map(w=>`<span class="pill gold">${escapeHTML(w)}</span>`).join('')}
+        </div>
+        <div style="margin-top:14px; border-top:1px solid var(--border-soft); padding-top:14px;">
+          <button class="btn btn-ghost btn-sm" id="btnRecommendFromTitle">이 제목 기반 AI 추천 10개 받기 →</button>
+        </div>
+        <div id="titleRecommendResult"></div>
+      </div>`;
+    document.getElementById('btnRecommendFromTitle').onclick = ()=> runTitleRecommend(title, data);
+    archiveSave('title', title, data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="result-block"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* 현재 제목 → AI 추천 10개 → CTR 순위 + 점수 */
+const TITLE_RECOMMEND_SYSTEM = `너는 세계 최고 수준의 유튜브 제목 카피라이터다. 사용자가 이미 쓴 "현재 제목"을 출발점으로 삼아, 같은 주제를 더 매력적으로 표현한 대안 제목 10개를 추천한다.
+반드시 JSON으로만 응답: {"titles":[{"title":"...", "expectedCTR":0-100, "score":0-100}, ... 10개]}
+score는 감정/호기심/검색성을 종합한 전체 품질 점수다. expectedCTR이 높은 순으로 정렬해서 출력하고, 원래 제목보다 더 나은 각도를 최소 절반 이상 포함해라.`;
+async function runTitleRecommend(originalTitle, scoreData){
+  const btn = document.getElementById('btnRecommendFromTitle');
+  const resultEl = document.getElementById('titleRecommendResult');
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(TITLE_RECOMMEND_SYSTEM, `현재 제목: "${originalTitle}"\n현재 제목의 종합점수: ${scoreData.totalScore ?? '-'}\n총평: ${scoreData.verdict||''}`, {json:true, temperature:0.9});
+    const titles = (data.titles||[]).sort((a,b)=>(b.expectedCTR||0)-(a.expectedCTR||0));
+    resultEl.innerHTML = `<div style="margin-top:14px;">
+      <table class="title-table">
+        <thead><tr><th>#</th><th>추천 제목</th><th>예상 CTR</th><th>점수</th></tr></thead>
+        <tbody>
+          ${titles.map((t,i)=>`<tr><td class="rank">${i+1}</td><td class="ttl">${escapeHTML(t.title)}</td><td class="score">${t.expectedCTR}</td><td class="score">${t.score}</td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+    archiveSave('titlegen', '[추천] '+originalTitle, data);
+  }catch(e){
+    resultEl.innerHTML = `<p style="color:var(--danger)">${escapeHTML(e.message)}</p>`;
+  }finally{ setLoading(btn, false, '이 제목 기반 AI 추천 10개 받기 →'); }
+}
+
+const TITLE_GEN_SYSTEM = `너는 세계 최고 수준의 유튜브 제목 카피라이터다. 주어진 소재와 톤앤매너에 맞춰 한국어 유튜브 제목 20개를 생성한다.
+반드시 JSON으로만 응답: {"titles":[{"title":"...", "expectedCTR":0-100, "score":0-100}, ... 20개]}
+score는 감정/호기심/검색성을 종합한 전체 품질 점수다. expectedCTR이 높은 순으로 정렬해서 출력한다. 각 제목은 서로 다른 각도(숫자형, 질문형, 반전형, 공감형 등)를 섞어라.`;
+
+document.getElementById('btnGenTitles').onclick = async ()=>{
+  const btn = document.getElementById('btnGenTitles');
+  const topic = document.getElementById('titleTopicInput').value.trim();
+  const tone = document.getElementById('titleToneSelect').value;
+  const resultEl = document.getElementById('titleGenResult');
+  if(!topic){ toast('소재를 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(TITLE_GEN_SYSTEM, `소재: ${topic}\n톤앤매너: ${tone}`, {json:true, temperature:0.9});
+    const titles = (data.titles||[]).sort((a,b)=>(b.expectedCTR||0)-(a.expectedCTR||0));
+    resultEl.innerHTML = `<div class="result-block">
+      <table class="title-table">
+        <thead><tr><th>#</th><th>제목</th><th>예상 CTR</th><th>점수</th></tr></thead>
+        <tbody>
+          ${titles.map((t,i)=>`<tr><td class="rank">${i+1}</td><td class="ttl">${escapeHTML(t.title)}</td><td class="score">${t.expectedCTR}</td><td class="score">${t.score}</td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>`;
+    archiveSave('titlegen', topic, data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="result-block"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   2) 대본 분석
+   ========================================================= */
+const SCRIPT_SYSTEM = `너는 세계 최고 수준의 유튜브 대본 컨설턴트다. 대본을 분석해 JSON으로만 응답한다.
+{
+ "hook":"첫 30초 훅 분석","story":"스토리 구조 분석","conflict":"갈등/문제 제시 분석",
+ "curiosity":"호기심 유발 요소 분석","emotion":"감정 흐름 분석",
+ "retentionAnalysis":"시청 지속(Retention) 관점 분석 - 어느 구간이 유지력이 강하고 약한지",
+ "ending":"엔딩 분석","cta":"CTA 분석",
+ "dropOffPoints":["AI가 예상하는 이탈 구간 2~3개. 대본 내 대략적 위치(초반/중반/후반 또는 문단 기준)와 이유를 함께"],
+ "longParts":["늘어지거나 너무 긴 부분 2~3개"],
+ "boringParts":["지루한 부분 2~3개"],
+ "cutSuggestions":["삭제 추천 2~3개"],"addSuggestions":["추가 추천 2~3개"],
+ "immersionScore":0-100,"expectedRetentionPercent":0-100
+}`;
+
+document.getElementById('btnAnalyzeScript').onclick = async ()=>{
+  const btn = document.getElementById('btnAnalyzeScript');
+  const script = document.getElementById('scriptInput').value.trim();
+  const resultEl = document.getElementById('scriptResult');
+  if(!script){ toast('대본을 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(SCRIPT_SYSTEM, script.slice(0,6000), {json:true, temperature:0.5});
+    resultEl.innerHTML = `<div class="card">
+      <div class="card-title">대본 분석 리포트 <span class="badge">REPORT</span></div>
+      <div class="grid2">
+        ${scoreBar('몰입도', data.immersionScore)}
+        ${scoreBar('예상 시청 지속률', data.expectedRetentionPercent)}
+      </div>
+      <div class="result-block"><h4>Hook (첫 30초)</h4><p>${escapeHTML(data.hook||'')}</p></div>
+      <div class="result-block"><h4>Story</h4><p>${escapeHTML(data.story||'')}</p></div>
+      <div class="result-block"><h4>Conflict</h4><p>${escapeHTML(data.conflict||'')}</p></div>
+      <div class="result-block"><h4>Curiosity</h4><p>${escapeHTML(data.curiosity||'')}</p></div>
+      <div class="result-block"><h4>Emotion</h4><p>${escapeHTML(data.emotion||'')}</p></div>
+      <div class="result-block"><h4>Retention</h4><p>${escapeHTML(data.retentionAnalysis||'')}</p></div>
+      <div class="result-block"><h4>Ending</h4><p>${escapeHTML(data.ending||'')}</p></div>
+      <div class="result-block"><h4>CTA</h4><p>${escapeHTML(data.cta||'')}</p></div>
+      <div class="result-block"><h4>AI가 예상하는 이탈 구간</h4><p>${(data.dropOffPoints||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block"><h4>늘어지는(긴) 부분</h4><p>${(data.longParts||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block"><h4>지루한 부분</h4><p>${(data.boringParts||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block"><h4>삭제 추천</h4><p>${(data.cutSuggestions||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block"><h4>추가 추천</h4><p>${(data.addSuggestions||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+    </div>`;
+    archiveSave('script', script.slice(0,40)+'...', data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   3) 아이디어 생성기 (파이프라인)
+   ========================================================= */
+const IDEA_SYSTEM = `너는 유튜브 콘텐츠 기획 전문가다. 키워드를 받아 한국어 유튜브 영상 아이디어 20개를 생성한다.
+JSON: {"ideas":[{"title":"영상 제목", "hook":"핵심 훅 한 줄", "audience":"타겟 시청자"}, ... 20개]}`;
+
+let currentIdeas = [];
+
+document.getElementById('btnGenIdeas').onclick = async ()=>{
+  const btn = document.getElementById('btnGenIdeas');
+  const keyword = document.getElementById('ideaKeywordInput').value.trim();
+  const resultEl = document.getElementById('ideaListResult');
+  if(!keyword){ toast('키워드를 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(IDEA_SYSTEM, `키워드: ${keyword}`, {json:true, temperature:0.95});
+    currentIdeas = data.ideas || [];
+    resultEl.innerHTML = `<div class="result-block">` +
+      currentIdeas.map((idea,i)=>`
+        <div class="idea-card">
+          <div class="ititle">${i+1}. ${escapeHTML(idea.title)}</div>
+          <div class="imeta">타겟: ${escapeHTML(idea.audience||'-')}</div>
+          <div class="ihook">${escapeHTML(idea.hook||'')}</div>
+          <div style="margin-top:8px;"><button class="btn btn-ghost btn-sm" data-idx="${i}">이 아이디어로 전개하기 →</button></div>
+        </div>`).join('') + `</div>`;
+    resultEl.querySelectorAll('button[data-idx]').forEach(b=>{
+      b.onclick = ()=> expandIdea(currentIdeas[Number(b.dataset.idx)]);
+    });
+    archiveSave('idea', keyword, data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="result-block"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+const IDEA_PIPELINE_SYSTEM = `너는 유튜브 콘텐츠 제작 파이프라인 AI다. 주어진 영상 아이디어를 실제 업로드 가능한 수준까지 전개한다.
+JSON:
+{
+ "titles":["클릭률 높은 제목 5개"],
+ "thumbnailText":["썸네일에 넣을 문구 3개(각 8자 이내)"],
+ "scriptOutline":["스크립트 개요 단계별 6~8개, 각 항목은 '섹션명: 내용 요약' 형태"],
+ "description":"유튜브 설명란 텍스트 (200자 내외)",
+ "tags":["태그 12개"],
+ "checklist":["업로드 전 체크리스트 6개"]
+}`;
+
+async function expandIdea(idea){
+  const card = document.getElementById('ideaPipelineCard');
+  const resultEl = document.getElementById('ideaPipelineResult');
+  card.classList.remove('hidden');
+  card.scrollIntoView({behavior:'smooth', block:'start'});
+  resultEl.innerHTML = `<div class="empty"><span class="spinner" style="border-color:var(--accent); border-top-color:transparent; width:20px;height:20px;"></span><br><br>"${escapeHTML(idea.title)}" 전개 중...</div>`;
+  try{
+    const data = await callGPT(IDEA_PIPELINE_SYSTEM, `아이디어 제목: ${idea.title}\n훅: ${idea.hook}\n타겟: ${idea.audience}`, {json:true, temperature:0.85});
+    resultEl.innerHTML = `
+      <div class="result-block"><h4>추천 제목 5</h4>${(data.titles||[]).map(t=>`<div class="pill gold" style="display:block;margin-bottom:6px;">${escapeHTML(t)}</div>`).join('')}</div>
+      <div class="result-block"><h4>썸네일 문구</h4>${(data.thumbnailText||[]).map(t=>`<span class="pill">${escapeHTML(t)}</span>`).join('')}</div>
+      <div class="result-block"><h4>스크립트 개요</h4>
+        <ul class="task-list">${(data.scriptOutline||[]).map(s=>`<li><div class="chk"></div>${escapeHTML(s)}</li>`).join('')}</ul>
+      </div>
+      <div class="result-block"><h4>설명란</h4><p>${escapeHTML(data.description||'')}</p></div>
+      <div class="result-block"><h4>태그</h4>${(data.tags||[]).map(t=>`<span class="pill">#${escapeHTML(t)}</span>`).join('')}</div>
+      <div class="result-block"><h4>업로드 체크리스트</h4>
+        <ul class="task-list">${(data.checklist||[]).map(s=>`<li><div class="chk"></div>${escapeHTML(s)}</li>`).join('')}</ul>
+      </div>`;
+    archiveSave('idea', '[전개] '+idea.title, data);
+  }catch(e){
+    resultEl.innerHTML = `<p style="color:var(--danger)">${escapeHTML(e.message)}</p>`;
+  }
+}
+
+/* =========================================================
+   4) AI 성장 코치
+   ========================================================= */
+const COACH_SYSTEM = `너는 유튜브 채널 성장 전략 코치다. 채널 현황을 분석해 JSON으로만 응답한다.
+{
+ "stage":"1000명 미만"|"1000~5000명"|"5000~1만명"|"1만~10만명"|"10만~100만명"|"100만명 이상" 중 하나,
+ "stageIndex":0-5 (위 단계의 인덱스),
+ "diagnosis":"현재 상황 진단 3~4문장",
+ "todayTasks":["오늘 해야할 일 3개"],
+ "weekTasks":["이번주 해야할 일 3~4개"],
+ "monthTasks":["이번달 해야할 일 3~4개"],
+ "priority":"가장 우선순위 높은 한 가지",
+ "roadmap":"다음 단계로 가기 위한 로드맵 요약 3~4문장"
+}`;
+
+document.getElementById('btnCoach').onclick = async ()=>{
+  const btn = document.getElementById('btnCoach');
+  const subs = document.getElementById('coachSubs').value;
+  const uploads = document.getElementById('coachUploads').value;
+  const niche = document.getElementById('coachNiche').value.trim();
+  const note = document.getElementById('coachNote').value.trim();
+  const resultEl = document.getElementById('coachResult');
+  if(!subs || !niche){ toast('구독자 수와 채널 주제를 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(COACH_SYSTEM, `구독자: ${subs}명\n주간 업로드: ${uploads||'미입력'}개\n채널 주제: ${niche}\n고민: ${note||'없음'}`, {json:true, temperature:0.6});
+    const stages = ['1000명 미만','1000~5000명','5000~1만명','1만~10만명','10만~100만명','100만명 이상'];
+    const idx = Number(data.stageIndex ?? 0);
+    resultEl.innerHTML = `<div class="card">
+      <div class="card-title">성장 단계 진단 <span class="badge">${escapeHTML(data.stage||'')}</span></div>
+      <div class="stage-track">
+        ${stages.map((s,i)=>`
+          <div class="stage-node">
+            <div class="stage-dot ${i<idx?'done':(i===idx?'current':'')}"></div>
+            <div class="stage-label ${i===idx?'active':''}">${s.replace('명','')}</div>
+          </div>`).join('')}
+      </div>
+      <div class="result-block"><h4>현재 진단</h4><p>${escapeHTML(data.diagnosis||'')}</p></div>
+      <div class="result-block"><h4>최우선 과제</h4><p>${escapeHTML(data.priority||'')}</p></div>
+      <div class="grid3" style="margin-top:16px;">
+        <div><h4 style="color:var(--teal); font-size:12.5px; margin-bottom:8px;">오늘</h4><ul class="task-list">${(data.todayTasks||[]).map(t=>`<li><div class="chk"></div>${escapeHTML(t)}</li>`).join('')}</ul></div>
+        <div><h4 style="color:var(--teal); font-size:12.5px; margin-bottom:8px;">이번주</h4><ul class="task-list">${(data.weekTasks||[]).map(t=>`<li><div class="chk"></div>${escapeHTML(t)}</li>`).join('')}</ul></div>
+        <div><h4 style="color:var(--teal); font-size:12.5px; margin-bottom:8px;">이번달</h4><ul class="task-list">${(data.monthTasks||[]).map(t=>`<li><div class="chk"></div>${escapeHTML(t)}</li>`).join('')}</ul></div>
+      </div>
+      <div class="result-block"><h4>로드맵</h4><p>${escapeHTML(data.roadmap||'')}</p></div>
+    </div>`;
+    archiveSave('coach', niche+' ('+subs+'명)', data);
+    Store.setJSON(STORE_KEYS.lastCoach, { ...data, niche, subs, date:new Date().toISOString() });
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   5) 영상 분석
+   ========================================================= */
+function resolveVideoId(raw){
+  let q = raw.trim();
+  const patterns = [/[?&]v=([a-zA-Z0-9_-]{11})/, /youtu\.be\/([a-zA-Z0-9_-]{11})/, /shorts\/([a-zA-Z0-9_-]{11})/, /embed\/([a-zA-Z0-9_-]{11})/];
+  for(const p of patterns){ const m = q.match(p); if(m) return m[1]; }
+  if(/^[a-zA-Z0-9_-]{11}$/.test(q)) return q;
+  throw new Error('영상 URL 또는 ID를 다시 확인해주세요.');
+}
+function parseISODuration(iso){
+  const m = (iso||'').match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if(!m) return '-';
+  const h=Number(m[1]||0), mi=Number(m[2]||0), s=Number(m[3]||0);
+  return h? `${h}:${String(mi).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${mi}:${String(s).padStart(2,'0')}`;
+}
+function isoDurationToSeconds(iso){
+  const m = (iso||'').match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if(!m) return 0;
+  return Number(m[1]||0)*3600 + Number(m[2]||0)*60 + Number(m[3]||0);
+}
+function formatSeconds(sec){
+  if(!sec) return '-';
+  const h = Math.floor(sec/3600), mi = Math.floor((sec%3600)/60), s = Math.round(sec%60);
+  return h? `${h}:${String(mi).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${mi}:${String(s).padStart(2,'0')}`;
+}
+const VIDEO_SYSTEM = `너는 유튜브 영상 성과 분석 전문가다. 영상의 제목·설명·길이·공개 지표(조회수/좋아요/댓글/참여율)만으로 분석해 JSON으로만 응답한다. 실제 대본, 노출수, CTR, 시청 지속시간, 이탈구간, 실제 트래픽 소스 데이터는 없으므로 제목·설명·썸네일·길이 기준 신호로 추론한다는 점을 감안해 분석한다.
+{
+ "whyHigh":"이 영상의 조회수/참여를 끌어올리는 긍정 요인 (제목 매력도, 주제 시의성, 썸네일 기대 등) 2~3문장",
+ "whyLow":"이 영상의 조회수/참여를 제한할 수 있는 요인 (경쟁 콘텐츠, 제목 모호함, 주제 협소함 등) 2~3문장",
+ "first30sec":"썸네일·제목 기준으로 예상되는 첫 30초 Hook 임팩트 분석",
+ "storyAnalysis":"주제를 풀어가는 스토리 접근 각도 분석",
+ "structureAnalysis":"길이와 설명란 구조로 추정한 영상 구성(도입-전개-결론 배치) 분석",
+ "immersionAnalysis":"제목·참여율 신호로 추정한 몰입도 평가",
+ "immersionScore":0-100,
+ "ctaGuess":"설명란 기반 CTA 유무/품질 분석",
+ "improvements":["개선 제안 3개"],
+ "trafficFit": {"추천영상":0-100,"검색":0-100,"쇼츠":0-100,"홈":0-100,"구독":0-100,"외부유입":0-100},
+ "contentTypeJudgment":"검색형 영상"|"추천형 영상"|"쇼츠형 영상"|"롱폼형 영상",
+ "contentTypeReason":"위 판단의 근거 2~3문장"
+}
+trafficFit은 실제 유입 비율이 아니라 제목·길이·주제의 특성상 어떤 유입 경로에 유리할지에 대한 AI의 상대적 적합도 추정치다.`;
+
+document.getElementById('btnFetchVideo').onclick = async ()=>{
+  const btn = document.getElementById('btnFetchVideo');
+  const raw = document.getElementById('videoQueryInput').value.trim();
+  const resultEl = document.getElementById('videoResult');
+  if(!raw){ toast('영상 URL 또는 ID를 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const videoId = resolveVideoId(raw);
+    const vidData = await ytGet('videos', { part:'snippet,statistics,contentDetails', id: videoId });
+    const v = vidData.items?.[0];
+    if(!v) throw new Error('영상 정보를 불러오지 못했습니다.');
+    const stats = v.statistics || {};
+    const views = Number(stats.viewCount||0), likes = Number(stats.likeCount||0), comments = Number(stats.commentCount||0);
+    const engagementRate = views? (((likes+comments)/views)*100).toFixed(2) : '0';
+
+    resultEl.innerHTML = `<div class="empty"><span class="spinner" style="border-color:var(--accent); border-top-color:transparent; width:20px;height:20px;"></span><br><br>AI가 영상을 분석하는 중...</div>`;
+
+    const gpt = await callGPT(VIDEO_SYSTEM, `제목: ${v.snippet.title}\n설명: ${(v.snippet.description||'').slice(0,600)}\n길이: ${parseISODuration(v.contentDetails?.duration)}\n조회수: ${views}\n좋아요: ${likes}\n댓글: ${comments}\n참여율: ${engagementRate}%`, {json:true, temperature:0.6});
+
+    resultEl.innerHTML = `<div class="card">
+      <div style="display:flex; gap:14px; margin-bottom:16px;">
+        <img src="${v.snippet.thumbnails?.medium?.url||''}" style="width:120px; border-radius:var(--radius-sm); border:1px solid var(--border-soft);">
+        <div>
+          <div style="font-weight:600; font-size:14.5px; margin-bottom:6px;">${escapeHTML(v.snippet.title)}</div>
+          <div style="font-size:11.5px; color:var(--text-muted);">길이 ${parseISODuration(v.contentDetails?.duration)} · ${new Date(v.snippet.publishedAt).toLocaleDateString('ko-KR')}</div>
+        </div>
+      </div>
+
+      <div class="card-title" style="margin-top:4px;">공개 지표 <span class="badge">MEASURED</span></div>
+      <div class="grid4">
+        <div class="idea-card stat-card"><div class="imeta">조회수</div><div class="stat-value" style="font-size:17px;">${views.toLocaleString()}</div></div>
+        <div class="idea-card stat-card"><div class="imeta">좋아요</div><div class="stat-value" style="font-size:17px;">${likes.toLocaleString()}</div></div>
+        <div class="idea-card stat-card"><div class="imeta">댓글수</div><div class="stat-value" style="font-size:17px;">${comments.toLocaleString()}</div></div>
+        <div class="idea-card stat-card"><div class="imeta">참여율</div><div class="stat-value" style="font-size:17px;">${engagementRate}%</div></div>
+      </div>
+
+      <div class="card-title" style="margin-top:16px;">비공개 지표 <span class="badge" style="background:var(--danger)22; color:var(--danger);">OAuth 필요</span></div>
+      <div class="grid4">
+        <div class="idea-card stat-card"><div class="imeta">노출수</div><div class="stat-locked">비공개</div></div>
+        <div class="idea-card stat-card"><div class="imeta">CTR</div><div class="stat-locked">비공개</div></div>
+        <div class="idea-card stat-card"><div class="imeta">평균 시청시간</div><div class="stat-locked">비공개</div></div>
+        <div class="idea-card stat-card"><div class="imeta">이탈구간</div><div class="stat-locked">비공개</div></div>
+        <div class="idea-card stat-card"><div class="imeta">싫어요</div><div class="stat-locked">2021년부터 비공개</div></div>
+        <div class="idea-card stat-card"><div class="imeta">공유</div><div class="stat-locked">API 미제공</div></div>
+        <div class="idea-card stat-card"><div class="imeta">저장(재생목록 추가)</div><div class="stat-locked">API 미제공</div></div>
+      </div>
+      <p style="font-size:11px; color:var(--text-muted); margin-top:8px;">※ 노출수·CTR·평균 시청시간·이탈구간은 YouTube 스튜디오 애널리틱스(채널 소유자 OAuth 로그인)에서만 확인할 수 있습니다. 싫어요 수는 2021년 11월부터 YouTube가 타인에게 비공개로 전환했고, 공유·저장 수치는 YouTube Data API 자체에 항목이 없습니다.</p>
+
+      <div class="card-title" style="margin-top:16px;">트래픽 소스 적합도 <span class="badge">AI 추정</span></div>
+      <p style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">실제 유입 비율(스튜디오 전용 비공개 데이터)이 아니라, 제목·길이·주제 특성상 어떤 유입 경로에 유리할지를 AI가 상대적으로 추정한 값입니다.</p>
+      <div class="grid3">
+        ${scoreBar('추천영상', gpt.trafficFit?.추천영상)}
+        ${scoreBar('검색', gpt.trafficFit?.검색)}
+        ${scoreBar('쇼츠', gpt.trafficFit?.쇼츠)}
+        ${scoreBar('홈', gpt.trafficFit?.홈)}
+        ${scoreBar('구독', gpt.trafficFit?.구독)}
+        ${scoreBar('외부유입', gpt.trafficFit?.외부유입)}
+      </div>
+      <div class="result-block">
+        <h4>AI 콘텐츠 유형 판단</h4>
+        <p><span class="pill gold" style="font-size:12.5px;">${escapeHTML(gpt.contentTypeJudgment||'-')}</span></p>
+        <p style="margin-top:8px;">${escapeHTML(gpt.contentTypeReason||'')}</p>
+      </div>
+
+      ${scoreBar('몰입도 (AI 추정)', gpt.immersionScore)}
+      <div class="result-block"><h4>왜 조회수가 높은가 (긍정 요인)</h4><p>${escapeHTML(gpt.whyHigh||'')}</p></div>
+      <div class="result-block"><h4>왜 조회수가 낮은가 (제한 요인)</h4><p>${escapeHTML(gpt.whyLow||'')}</p></div>
+      <div class="result-block"><h4>첫 30초 분석</h4><p>${escapeHTML(gpt.first30sec||'')}</p></div>
+      <div class="result-block"><h4>스토리 분석</h4><p>${escapeHTML(gpt.storyAnalysis||'')}</p></div>
+      <div class="result-block"><h4>구성 분석</h4><p>${escapeHTML(gpt.structureAnalysis||'')}</p></div>
+      <div class="result-block"><h4>몰입도 분석</h4><p>${escapeHTML(gpt.immersionAnalysis||'')}</p></div>
+      <div class="result-block"><h4>CTA 분석</h4><p>${escapeHTML(gpt.ctaGuess||'')}</p></div>
+      <div class="result-block"><h4>개선 제안</h4><p>${(gpt.improvements||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+
+      <div class="result-block">
+        <h4>AI 개선 제안 실행</h4>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:10px;">위 개선 제안을 실제로 반영한 대체 소재를 한 번에 생성합니다.</p>
+        <div id="videoImproveResult"><button class="btn btn-ghost btn-sm" id="btnVideoImprove">AI 개선 제안 실행 →</button></div>
+      </div>
+    </div>`;
+    document.getElementById('btnVideoImprove').onclick = ()=> runVideoImproveAction(v, gpt);
+    archiveSave('video', v.snippet.title, {views,likes,comments,gpt});
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+const VIDEO_IMPROVE_ACTION_SYSTEM = `너는 유튜브 콘텐츠 개선 실행 담당 AI다. 영상의 제목·설명·개선 제안을 보고 실제로 적용 가능한 대체 소재를 JSON으로만 생성한다.
+{
+ "titleFix": ["개선된 제목 3~5개"],
+ "thumbnailConcepts": ["썸네일 컨셉/문구 아이디어 3개, 각각 8자 내외 문구+간단한 비주얼 설명"],
+ "scriptFix": "대본(도입부/구성) 수정 방향 제안 2~3문장",
+ "descriptionFix": "개선된 설명란 텍스트 (150자 내외)",
+ "tags": ["추천 태그 12개"]
+}`;
+async function runVideoImproveAction(v, gpt){
+  const wrap = document.getElementById('videoImproveResult');
+  wrap.innerHTML = `<span class="spinner" style="border-color:var(--accent); border-top-color:transparent; width:16px;height:16px; display:inline-block;"></span> 생성 중...`;
+  try{
+    const improvementsStr = (gpt.improvements||[]).map(t=>'- '+t).join('\n');
+    const data = await callGPT(VIDEO_IMPROVE_ACTION_SYSTEM,
+      `제목: ${v.snippet.title}\n설명: ${(v.snippet.description||'').slice(0,400)}\n개선 제안:\n${improvementsStr}`,
+      {json:true, temperature:0.8, maxTokens:1200});
+    wrap.innerHTML = `
+      <div class="idea-card">
+        <div class="ititle">제목 수정</div>
+        ${(data.titleFix||[]).map(t=>`<div class="ihook" style="margin-top:4px;">• ${escapeHTML(t)}</div>`).join('')}
+      </div>
+      <div class="idea-card">
+        <div class="ititle">썸네일 생성</div>
+        ${(data.thumbnailConcepts||[]).map(t=>`<div class="ihook" style="margin-top:4px;">• ${escapeHTML(t)}</div>`).join('')}
+      </div>
+      <div class="idea-card">
+        <div class="ititle">대본 수정</div>
+        <div class="ihook" style="margin-top:4px;">${escapeHTML(data.scriptFix||'')}</div>
+      </div>
+      <div class="idea-card">
+        <div class="ititle">설명 생성</div>
+        <div class="ihook" style="margin-top:4px;">${escapeHTML(data.descriptionFix||'')}</div>
+      </div>
+      <div class="idea-card">
+        <div class="ititle">태그 생성</div>
+        <div style="margin-top:4px;">${(data.tags||[]).map(t=>`<span class="pill">#${escapeHTML(t)}</span>`).join('')}</div>
+      </div>`;
+    archiveSave('video', '[개선실행] '+v.snippet.title, data);
+  }catch(e){
+    wrap.innerHTML = `<p style="color:var(--danger)">${escapeHTML(e.message)}</p>`;
+  }
+}
+
+/* =========================================================
+   6) 썸네일 분석 (GPT Vision)
+   ========================================================= */
+let thumbnailDataUrl = null;
+document.getElementById('thumbnailFileInput').onchange = (e)=>{
+  const file = e.target.files?.[0];
+  const analyzeBtn = document.getElementById('btnAnalyzeThumbnail');
+  if(!file){ analyzeBtn.disabled = true; return; }
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    thumbnailDataUrl = reader.result;
+    document.getElementById('thumbnailPreviewWrap').innerHTML = `<img src="${thumbnailDataUrl}" style="max-width:320px; border-radius:var(--radius-md); border:1px solid var(--border-soft);">`;
+    analyzeBtn.disabled = false;
+  };
+  reader.readAsDataURL(file);
+};
+
+const THUMBNAIL_SYSTEM = `너는 유튜브 썸네일 디자인 전문가다. 이미지를 보고 클릭률 관점에서 분석해 JSON으로만 응답한다.
+{
+ "scores": {"얼굴":0-100,"표정":0-100,"색감":0-100,"대비":0-100,"텍스트":0-100,"시선유도":0-100,"클릭유도":0-100,"경쟁력":0-100,"예상CTR":0-100},
+ "totalScore":0-100,
+ "verdict":"한 줄 총평",
+ "actionSuggestions":[
+   {"type":"텍스트 줄이기"|"색 변경"|"얼굴 확대"|"표정 변경"|"폰트 변경"|"대비 강화"|"레이아웃 조정", "detail":"왜 필요한지와 구체적 실행 방법 1문장"}
+ ]
+}
+얼굴이 없으면 얼굴/표정은 각각 50점(중립)으로 채점한다. actionSuggestions는 이 썸네일에 실제로 해당하는 항목만 2~4개 골라서 담는다. 설명 없이 JSON만 출력.`;
+
+document.getElementById('btnAnalyzeThumbnail').onclick = async ()=>{
+  const btn = document.getElementById('btnAnalyzeThumbnail');
+  const resultEl = document.getElementById('thumbnailResult');
+  if(!thumbnailDataUrl){ toast('이미지를 먼저 업로드해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(THUMBNAIL_SYSTEM, '이 유튜브 썸네일을 분석해줘.', {json:true, temperature:0.5, imageDataUrl:thumbnailDataUrl});
+    resultEl.innerHTML = `<div class="card">
+      <div class="grid3">
+        <div>
+          ${scoreBar('얼굴', data.scores?.얼굴)}
+          ${scoreBar('표정', data.scores?.표정)}
+          ${scoreBar('색감', data.scores?.색감)}
+        </div>
+        <div>
+          ${scoreBar('대비', data.scores?.대비)}
+          ${scoreBar('텍스트', data.scores?.텍스트)}
+          ${scoreBar('시선 유도', data.scores?.시선유도)}
+        </div>
+        <div>
+          ${scoreBar('클릭 유도', data.scores?.클릭유도)}
+          ${scoreBar('경쟁력', data.scores?.경쟁력)}
+          ${scoreBar('예상 CTR', data.scores?.예상CTR)}
+        </div>
+      </div>
+      ${scoreBar('종합 점수', data.totalScore)}
+      <div class="result-block"><h4>총평</h4><p>${escapeHTML(data.verdict||'')}</p></div>
+      <div class="result-block">
+        <h4>개선 제안</h4>
+        ${(data.actionSuggestions||[]).map(a=>`
+          <div class="idea-card">
+            <span class="pill gold">${escapeHTML(a.type||'')}</span>
+            <div class="ihook" style="margin-top:6px;">${escapeHTML(a.detail||'')}</div>
+          </div>`).join('') || '<div class="empty">추가 개선 제안이 없습니다.</div>'}
+      </div>
+    </div>`;
+    archiveSave('thumbnail', '썸네일 분석 · '+new Date().toLocaleString('ko-KR'), data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   7) SEO 분석
+   ========================================================= */
+const SEO_SYSTEM = `너는 유튜브 SEO 전문가다. 제목·설명·태그를 분석해 JSON으로만 응답한다.
+{
+ "titleScore":0-100, "descriptionScore":0-100, "tagsScore":0-100, "keywordCoverage":0-100, "totalScore":0-100,
+ "missingElements":["빠진 SEO 요소들"], "improvements":["구체적 개선 제안 3~4개"]
+}`;
+document.getElementById('btnAnalyzeSeo').onclick = async ()=>{
+  const btn = document.getElementById('btnAnalyzeSeo');
+  const title = document.getElementById('seoTitleInput').value.trim();
+  const desc = document.getElementById('seoDescInput').value.trim();
+  const tags = document.getElementById('seoTagsInput').value.trim();
+  const resultEl = document.getElementById('seoResult');
+  if(!title){ toast('제목을 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(SEO_SYSTEM, `제목: ${title}\n설명: ${desc||'없음'}\n태그: ${tags||'없음'}`, {json:true, temperature:0.4});
+    resultEl.innerHTML = `<div class="card">
+      <div class="grid2">
+        <div>${scoreBar('제목 SEO', data.titleScore)}${scoreBar('설명 SEO', data.descriptionScore)}</div>
+        <div>${scoreBar('태그 SEO', data.tagsScore)}${scoreBar('키워드 커버리지', data.keywordCoverage)}</div>
+      </div>
+      ${scoreBar('종합 SEO 점수', data.totalScore)}
+      <div class="result-block"><h4>빠진 요소</h4><p>${(data.missingElements||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block"><h4>개선 제안</h4><p>${(data.improvements||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+    </div>`;
+    archiveSave('seo', title, data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   8) 키워드 분석
+   ========================================================= */
+const KEYWORD_SYSTEM = `너는 유튜브 키워드 리서치 전문가다. 실제 검색 데이터는 제공되지 않으므로 네 지식을 바탕으로 한 추정치임을 전제하고 JSON으로만 응답한다.
+{
+ "searchDemand":"낮음"|"중간"|"높음", "competition":0-100, "growthRate":"상승"|"보합"|"하락",
+ "searchIntent":"이 키워드를 검색하는 사람들의 의도 설명",
+ "relatedKeywords":["연관 키워드 30개"],
+ "longtailKeywords":["롱테일 키워드 15개"],
+ "contentIdeas":["지금 만들면 좋은 소재 10개"]
+}`;
+document.querySelectorAll('.keyword-chip').forEach(chip=>{
+  chip.onclick = ()=>{ document.getElementById('keywordInput').value = chip.dataset.kw; };
+});
+document.getElementById('btnAnalyzeKeyword').onclick = async ()=>{
+  const btn = document.getElementById('btnAnalyzeKeyword');
+  const keyword = document.getElementById('keywordInput').value.trim();
+  const resultEl = document.getElementById('keywordResult');
+  if(!keyword){ toast('키워드를 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(KEYWORD_SYSTEM, `키워드: ${keyword}`, {json:true, temperature:0.7, maxTokens:1800});
+    resultEl.innerHTML = `<div class="card">
+      <div class="row">
+        <span class="pill gold">검색량 ${escapeHTML(data.searchDemand||'-')}</span>
+        <span class="pill">경쟁도 ${data.competition ?? '-'}</span>
+        <span class="pill">성장률 ${escapeHTML(data.growthRate||'-')}</span>
+      </div>
+      <div class="result-block"><h4>검색 의도</h4><p>${escapeHTML(data.searchIntent||'')}</p></div>
+      <div class="result-block"><h4>관련 키워드 (${(data.relatedKeywords||[]).length}개)</h4>${(data.relatedKeywords||[]).map(k=>`<span class="pill">${escapeHTML(k)}</span>`).join('')}</div>
+      <div class="result-block"><h4>롱테일 키워드</h4>${(data.longtailKeywords||[]).map(k=>`<span class="pill">${escapeHTML(k)}</span>`).join('')}</div>
+      <div class="result-block"><h4>지금 만들면 좋은 소재</h4><p>${(data.contentIdeas||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block">
+        <h4>추천 소재 100개</h4>
+        <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">위 10개는 핵심 추천이고, 아래 버튼을 누르면 이 키워드로 만들 수 있는 소재 100개를 한 번에 뽑아줍니다.</p>
+        <div id="keyword100Result"><button class="btn btn-ghost btn-sm" id="btnKeyword100">추천 소재 100개 생성 →</button></div>
+      </div>
+    </div>`;
+    document.getElementById('btnKeyword100').onclick = ()=> runKeyword100(keyword);
+    archiveSave('keyword', keyword, data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+const KEYWORD_100_SYSTEM = `너는 유튜브 소재 발굴 전문가다. 주어진 키워드를 기반으로 실제 영상으로 만들 수 있는 구체적인 소재 100개를 생성한다.
+반드시 JSON으로만 응답: {"ideas":["소재 100개, 각각 실제 영상 제목처럼 구체적으로"]}
+서로 다른 각도(초보자용, 심화, 논쟁적, 스토리텔링, 리스트형, Q&A형 등)를 골고루 섞어라.`;
+async function runKeyword100(keyword){
+  const wrap = document.getElementById('keyword100Result');
+  wrap.innerHTML = `<span class="spinner" style="border-color:var(--accent); border-top-color:transparent; width:16px;height:16px; display:inline-block;"></span> 생성 중...`;
+  try{
+    const data = await callGPT(KEYWORD_100_SYSTEM, `키워드: ${keyword}`, {json:true, temperature:0.9, maxTokens:3000});
+    const ideas = data.ideas || [];
+    wrap.innerHTML = `<div style="max-height:360px; overflow-y:auto; border:1px solid var(--border-soft); border-radius:var(--radius-sm); padding:10px;">
+      ${ideas.map((t,i)=>`<div style="padding:5px 0; border-bottom:1px solid var(--border-soft); font-size:12.5px; color:var(--text-secondary);">${i+1}. ${escapeHTML(t)}</div>`).join('')}
+    </div>
+    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">총 ${ideas.length}개 생성됨</div>`;
+    archiveSave('keyword', keyword+' - 소재 100개', data);
+  }catch(e){
+    wrap.innerHTML = `<p style="color:var(--danger)">${escapeHTML(e.message)}</p>`;
+  }
+}
+
+/* =========================================================
+   9) 트렌드 분석 (실시간 YouTube 인기 급상승)
+   ========================================================= */
+const TREND_SYSTEM = `너는 유튜브 트렌드 분석가다. 아래 실시간 인기 급상승 영상 제목 목록을 보고 JSON으로만 응답한다.
+{
+ "trendingKeywords":["트렌딩 영상 제목들에서 뽑아낸 인기 키워드 10개"],
+ "buzzTopics":["지금 화제가 되고 있는 주제/이슈 3~5개"],
+ "newsContext":"트렌딩 흐름에서 읽히는 최근 이슈/뉴스 맥락 2~3문장 (실시간 뉴스 검색이 아니라 트렌딩 목록 기반 추론임을 감안)",
+ "searchVolumeNote":"지금 사람들이 많이 검색하고 있을 것으로 추정되는 키워드/주제에 대한 한 줄 코멘트",
+ "next48h":[{"idea":"지금 48시간 안에 만들면 좋은 영상 소재", "explosionPotential":0-100}],
+ "thisWeek":[{"idea":"이번주 다룰만한 주제", "explosionPotential":0-100}],
+ "thisMonth":[{"idea":"이번달 다룰만한 주제", "explosionPotential":0-100}],
+ "insight":"현재 트렌드에서 읽히는 시청자 관심사 흐름 2~3문장"
+}
+next48h/thisWeek/thisMonth는 각각 3개씩. explosionPotential은 해당 소재가 급상승(폭발)할 가능성에 대한 상대 점수다.`;
+document.getElementById('btnFetchTrend').onclick = async ()=>{
+  const btn = document.getElementById('btnFetchTrend');
+  const region = document.getElementById('trendRegionSelect').value;
+  const resultEl = document.getElementById('trendResult');
+  setLoading(btn, true);
+  try{
+    const data = await ytGet('videos', { part:'snippet,statistics', chart:'mostPopular', regionCode:region, maxResults:15 });
+    const items = (data.items||[]).map(v=>({ title:v.snippet.title, channel:v.snippet.channelTitle, views:Number(v.statistics.viewCount||0) }));
+    resultEl.innerHTML = `<div class="empty"><span class="spinner" style="border-color:var(--accent); border-top-color:transparent; width:20px;height:20px;"></span><br><br>AI가 트렌드를 해석하는 중...</div>`;
+    const gpt = await callGPT(TREND_SYSTEM, items.map((it,i)=>`${i+1}. ${it.title} (${it.channel}, 조회수 ${it.views.toLocaleString()})`).join('\n'), {json:true, temperature:0.8, maxTokens:1800});
+
+    const renderIdeaList = (list)=> (list||[]).map(x=>`
+      <li style="display:flex; justify-content:space-between; gap:8px; align-items:flex-start;">
+        <span style="display:flex; gap:8px;"><div class="chk" style="margin-top:3px;"></div>${escapeHTML(x.idea||'')}</span>
+        <span class="pill gold" style="flex-shrink:0; white-space:nowrap;">폭발력 ${x.explosionPotential ?? '-'}</span>
+      </li>`).join('');
+
+    resultEl.innerHTML = `
+      <div class="card">
+        <div class="card-title">인기 키워드 · 화제 <span class="badge">TRENDING</span></div>
+        <div class="result-block" style="border-top:none; margin-top:0; padding-top:0;">
+          <h4>인기 키워드</h4>
+          ${(gpt.trendingKeywords||[]).map(k=>`<span class="pill">${escapeHTML(k)}</span>`).join('') || '<span class="empty">데이터 없음</span>'}
+        </div>
+        <div class="result-block">
+          <h4>화제 주제</h4>
+          ${(gpt.buzzTopics||[]).map(k=>`<span class="pill gold">${escapeHTML(k)}</span>`).join('') || '<span class="empty">데이터 없음</span>'}
+        </div>
+        <div class="result-block">
+          <h4>뉴스/이슈 맥락 <span style="font-weight:400; color:var(--text-muted); font-size:11px;">(트렌딩 신호 기반 추론, 실시간 뉴스 검색 아님)</span></h4>
+          <p>${escapeHTML(gpt.newsContext||'')}</p>
+        </div>
+        <div class="result-block">
+          <h4>검색량 코멘트 <span style="font-weight:400; color:var(--text-muted); font-size:11px;">(AI 추정)</span></h4>
+          <p>${escapeHTML(gpt.searchVolumeNote||'')}</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">지금 추천 소재 <span class="badge">AI PICK</span></div>
+        <div class="grid3">
+          <div><h4 style="color:var(--teal); font-size:12px; margin-bottom:6px;">48시간 내</h4><ul class="task-list">${renderIdeaList(gpt.next48h)}</ul></div>
+          <div><h4 style="color:var(--teal); font-size:12px; margin-bottom:6px;">이번주</h4><ul class="task-list">${renderIdeaList(gpt.thisWeek)}</ul></div>
+          <div><h4 style="color:var(--teal); font-size:12px; margin-bottom:6px;">이번달</h4><ul class="task-list">${renderIdeaList(gpt.thisMonth)}</ul></div>
+        </div>
+        <div class="result-block"><h4>트렌드 인사이트</h4><p>${escapeHTML(gpt.insight||'')}</p></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">실시간 인기 급상승 (${region}) <span class="badge">MEASURED</span></div>
+        ${items.map((it,i)=>`<div class="idea-card"><div class="ititle">${i+1}. ${escapeHTML(it.title)}</div><div class="imeta">${escapeHTML(it.channel)} · 조회수 ${it.views.toLocaleString()}</div></div>`).join('')}
+      </div>`;
+    archiveSave('trend', `트렌드 분석 (${region}) ${new Date().toLocaleDateString('ko-KR')}`, {items, gpt});
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   10) 경쟁채널 분석
+   ========================================================= */
+const COMPETITOR_SYSTEM = `너는 유튜브 경쟁채널 분석 전문가다. 최대 3개 경쟁 채널(A/B/C)의 통계와 최근 영상 제목, (있다면) 내 채널 주제를 보고 JSON으로만 응답한다.
+{
+ "channels": [
+   {"label":"A", "growthReasons":"이 채널이 성장하는 이유 2~3문장", "learnPoints":["배워야 하는 점 2~3개"]}
+   // 입력된 채널 수만큼 B, C도 동일한 형식으로
+ ],
+ "commonSuccessPatterns": {
+   "titleStructure":"입력된 채널들의 제목에서 공통적으로 보이는 구조/패턴",
+   "thumbnailPattern":"썸네일에서 반복되는 공통 패턴 (색감, 텍스트 배치 등 제목/설명 기반 추정)",
+   "videoLength":"공통적으로 나타나는 영상 길이 경향",
+   "hookPattern":"영상들이 관심을 끄는 공통적인 훅 방식 추정"
+ },
+ "differentiationStrategy":"A/B/C를 종합해서 내 채널이 취할 수 있는 차별화 전략 3~4문장",
+ "opportunities":["시장 기회 2~3개"]
+}`;
+
+function computeAvgDuration(videos){
+  if(!videos?.length) return null;
+  const secs = videos.map(v=>v.durationSec||0).filter(Boolean);
+  if(!secs.length) return null;
+  return secs.reduce((a,b)=>a+b,0)/secs.length;
+}
+function computeAvgComments(videos){
+  if(!videos?.length) return null;
+  return videos.reduce((a,v)=>a+(v.comments||0),0)/videos.length;
+}
+
+document.getElementById('btnAnalyzeCompetitor').onclick = async ()=>{
+  const btn = document.getElementById('btnAnalyzeCompetitor');
+  const raws = [
+    { label:'A', raw: document.getElementById('competitorQueryInputA').value.trim() },
+    { label:'B', raw: document.getElementById('competitorQueryInputB').value.trim() },
+    { label:'C', raw: document.getElementById('competitorQueryInputC').value.trim() }
+  ].filter(x=> x.raw);
+  const myNiche = document.getElementById('myNicheInput').value.trim();
+  const resultEl = document.getElementById('competitorResult');
+  if(!raws.length){ toast('경쟁 채널을 최소 1개 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    resultEl.innerHTML = `<div class="empty"><span class="spinner" style="border-color:var(--accent); border-top-color:transparent; width:20px;height:20px;"></span><br><br>경쟁 채널 데이터를 불러오는 중...</div>`;
+
+    const bundles = [];
+    for(const item of raws){
+      const channelId = await resolveChannelId(item.raw);
+      const bundle = await fetchChannelBundle(channelId);
+      bundles.push({ label:item.label, bundle,
+        avgDuration: computeAvgDuration(bundle.videos),
+        avgComments: computeAvgComments(bundle.videos),
+        uploadPattern: computeUploadPattern(bundle.videos) });
+    }
+
+    resultEl.innerHTML = `<div class="empty"><span class="spinner" style="border-color:var(--accent); border-top-color:transparent; width:20px;height:20px;"></span><br><br>AI가 경쟁 전략을 분석하는 중...</div>`;
+
+    const promptBlocks = bundles.map(b=>
+      `[채널 ${b.label}] ${b.bundle.title}\n구독자: ${b.bundle.subs}\n총 조회수: ${b.bundle.totalViews}\n영상 수: ${b.bundle.videoCount}\n평균 영상 길이: ${b.avgDuration? formatSeconds(Math.round(b.avgDuration)) : '알 수 없음'}\n업로드 빈도: ${b.uploadPattern.avgGapDays!==null? b.uploadPattern.avgGapDays.toFixed(1)+'일마다':'알 수 없음'}\n평균 댓글수: ${b.avgComments!==null? Math.round(b.avgComments):'알 수 없음'}\n최근 영상 제목:\n${b.bundle.videos.map(v=>'- '+v.title).join('\n')}`
+    ).join('\n\n');
+
+    const gpt = await callGPT(COMPETITOR_SYSTEM, `${promptBlocks}\n\n내 채널 주제: ${myNiche||'미입력'}`, {json:true, temperature:0.7, maxTokens:2000});
+    const channelAnalysis = {};
+    (gpt.channels||[]).forEach(c=>{ channelAnalysis[c.label] = c; });
+
+    resultEl.innerHTML = `
+      <div class="card">
+        <div class="card-title">경쟁채널 비교 <span class="badge">MEASURED</span></div>
+        <table class="title-table">
+          <thead><tr><th>채널</th><th>조회수(총)</th><th>평균 영상길이</th><th>업로드 빈도</th><th>평균 댓글수</th><th>CTR</th><th>대본</th></tr></thead>
+          <tbody>
+            ${bundles.map(b=>`<tr>
+              <td class="ttl">${escapeHTML(b.label)} · ${escapeHTML(b.bundle.title)}</td>
+              <td class="score">${b.bundle.totalViews.toLocaleString()}</td>
+              <td class="score">${b.avgDuration? formatSeconds(Math.round(b.avgDuration)) : '-'}</td>
+              <td class="score">${b.uploadPattern.avgGapDays!==null? b.uploadPattern.avgGapDays.toFixed(1)+'일':'-'}</td>
+              <td class="score">${b.avgComments!==null? Math.round(b.avgComments).toLocaleString():'-'}</td>
+              <td class="score" style="color:var(--text-muted);">비공개</td>
+              <td class="score" style="color:var(--text-muted);">비공개</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        <p style="font-size:11px; color:var(--text-muted); margin-top:8px;">※ CTR은 OAuth 전용 비공개 데이터, 대본(자막)은 YouTube Data API로 타 채널 것을 가져올 수 없어 표시할 수 없습니다.</p>
+      </div>
+
+      ${bundles.map(b=>{
+        const a = channelAnalysis[b.label] || {};
+        return `<div class="card">
+          <div style="display:flex; gap:14px; align-items:center; margin-bottom:14px;">
+            ${b.bundle.thumb? `<img src="${b.bundle.thumb}" style="width:48px;height:48px;border-radius:50%;">`:''}
+            <div>
+              <div style="font-weight:700; font-family:var(--font-display);">채널 ${escapeHTML(b.label)} · ${escapeHTML(b.bundle.title)}</div>
+              <div style="font-size:11.5px; color:var(--text-muted);">구독자 ${b.bundle.subs.toLocaleString()} · 영상 ${b.bundle.videoCount.toLocaleString()}개</div>
+            </div>
+          </div>
+          <div class="result-block" style="border-top:none; margin-top:0; padding-top:0;"><h4>왜 성장하는가</h4><p>${escapeHTML(a.growthReasons||'')}</p></div>
+          <div class="result-block"><h4>배워야 하는 점</h4><p>${(a.learnPoints||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+          <div class="result-block"><h4>제목 · 썸네일 (최근 업로드)</h4>
+            <div class="grid3">
+              ${b.bundle.videos.slice(0,3).map(v=>`
+                <div class="idea-card">
+                  ${v.thumb? `<img src="${v.thumb}" style="width:100%; border-radius:8px; margin-bottom:6px;">`:''}
+                  <div class="ititle" style="font-size:12.5px;">${escapeHTML(v.title)}</div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+
+      <div class="card">
+        <div class="card-title">공통 성공 요소 (자동 벤치마킹) <span class="badge">BENCHMARK</span></div>
+        <div class="grid2">
+          <div class="idea-card"><div class="imeta">제목 구조</div><div class="ihook">${escapeHTML(gpt.commonSuccessPatterns?.titleStructure||'')}</div></div>
+          <div class="idea-card"><div class="imeta">썸네일 패턴</div><div class="ihook">${escapeHTML(gpt.commonSuccessPatterns?.thumbnailPattern||'')}</div></div>
+          <div class="idea-card"><div class="imeta">영상 길이 경향</div><div class="ihook">${escapeHTML(gpt.commonSuccessPatterns?.videoLength||'')}</div></div>
+          <div class="idea-card"><div class="imeta">Hook 패턴</div><div class="ihook">${escapeHTML(gpt.commonSuccessPatterns?.hookPattern||'')}</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">종합 차별화 전략 <span class="badge">SYNTHESIS</span></div>
+        <div class="result-block" style="border-top:none; margin-top:0; padding-top:0;"><p>${escapeHTML(gpt.differentiationStrategy||'')}</p></div>
+        <div class="result-block"><h4>기회 요인</h4><p>${(gpt.opportunities||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      </div>`;
+
+    archiveSave('competitor', bundles.map(b=>b.bundle.title).join(' vs '), {bundles, gpt});
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   11) 시청자 분석 (AI 추정 페르소나)
+   ========================================================= */
+const AUDIENCE_SYSTEM = `너는 유튜브 시청자 리서치 전문가다. 실제 인구통계 데이터는 없으므로 채널 주제와 영상 제목만으로 추론한 페르소나임을 전제하고 JSON으로만 응답한다.
+{
+ "ageRange":"예상 주요 연령대",
+ "genderLean":"예상 성별 분포 (예: 남성 다소 우세 / 여성 다소 우세 / 균형)",
+ "countryEstimate":"예상 주요 국가/지역 분포 (언어와 소재 기준 추론)",
+ "acquisitionChannels": {"검색":0-100,"추천":0-100,"구독":0-100,"외부유입":0-100},
+ "activeTime":"예상 주 시청 활동 시간대 (예: 평일 저녁, 주말 오전 등)",
+ "returningViewerLikelihood":"낮음"|"중간"|"높음",
+ "returningViewerComment":"재방문율 추정 근거 1문장",
+ "interests":["관심사 4~5개"],
+ "preferredContent":["좋아할 콘텐츠 유형 3개"], "dislikedContent":["싫어할 콘텐츠 유형 2~3개"],
+ "idealVideoLength":"적정 영상 길이 추천", "tone":"추천 말투", "editingStyle":"추천 편집 스타일",
+ "summary":"페르소나 요약 3~4문장"
+}
+연령/성별/국가/유입경로/활동시간/재방문율은 실제 애널리틱스가 아닌 채널 주제·제목 기반 AI 추정치임을 명심하고 과도하게 단정적으로 쓰지 않는다.`;
+document.getElementById('btnAnalyzeAudience').onclick = async ()=>{
+  const btn = document.getElementById('btnAnalyzeAudience');
+  const niche = document.getElementById('audienceNicheInput').value.trim();
+  const titles = document.getElementById('audienceTitlesInput').value.trim();
+  const resultEl = document.getElementById('audienceResult');
+  if(!niche){ toast('채널 주제를 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(AUDIENCE_SYSTEM, `채널 주제: ${niche}\n최근 영상 제목:\n${titles||'미입력'}`, {json:true, temperature:0.7});
+    resultEl.innerHTML = `<div class="card">
+      <div class="card-title">시청자 인구통계 <span class="badge">AI 추정</span></div>
+      <p style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">실제 연령/성별/국가/재방문율 데이터는 채널 소유자만 YouTube 스튜디오(OAuth)에서 볼 수 있습니다. 아래 값은 채널 주제와 제목만으로 AI가 추정한 것이며 참고용입니다.</p>
+      <div class="grid3">
+        <div class="idea-card stat-card"><div class="imeta">연령대</div><div class="stat-value" style="font-size:15px;">${escapeHTML(data.ageRange||'-')}</div></div>
+        <div class="idea-card stat-card"><div class="imeta">성별 분포</div><div class="stat-value" style="font-size:15px;">${escapeHTML(data.genderLean||'-')}</div></div>
+        <div class="idea-card stat-card"><div class="imeta">국가/지역</div><div class="stat-value" style="font-size:15px;">${escapeHTML(data.countryEstimate||'-')}</div></div>
+        <div class="idea-card stat-card"><div class="imeta">활동 시간대</div><div class="stat-value" style="font-size:15px;">${escapeHTML(data.activeTime||'-')}</div></div>
+        <div class="idea-card stat-card">
+          <div class="imeta">재방문율</div>
+          <div class="stat-value" style="font-size:15px;">${escapeHTML(data.returningViewerLikelihood||'-')}</div>
+          <div class="stat-sub">${escapeHTML(data.returningViewerComment||'')}</div>
+        </div>
+        <div class="idea-card stat-card"><div class="imeta">적정 영상 길이</div><div class="stat-value" style="font-size:15px;">${escapeHTML(data.idealVideoLength||'-')}</div></div>
+      </div>
+      <div class="result-block">
+        <h4>유입 경로 적합도 (AI 추정)</h4>
+        <div class="grid4">
+          ${scoreBar('검색', data.acquisitionChannels?.검색)}
+          ${scoreBar('추천', data.acquisitionChannels?.추천)}
+          ${scoreBar('구독', data.acquisitionChannels?.구독)}
+          ${scoreBar('외부유입', data.acquisitionChannels?.외부유입)}
+        </div>
+      </div>
+      <div class="result-block"><h4>관심사</h4>${(data.interests||[]).map(t=>`<span class="pill">${escapeHTML(t)}</span>`).join('')}</div>
+      <div class="result-block"><h4>좋아할 소재</h4><p>${(data.preferredContent||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block"><h4>싫어할 소재</h4><p>${(data.dislikedContent||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block"><h4>추천 말투</h4><p>${escapeHTML(data.tone||'')}</p></div>
+      <div class="result-block"><h4>추천 편집 스타일</h4><p>${escapeHTML(data.editingStyle||'')}</p></div>
+      <div class="result-block"><h4>페르소나 요약</h4><p>${escapeHTML(data.summary||'')}</p></div>
+    </div>`;
+    archiveSave('audience', niche, data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   18) CTR·시청지속시간 통합 예측 AI
+   ========================================================= */
+let predictorThumbDataUrl = null;
+document.getElementById('predictorThumbFileInput').onchange = (e)=>{
+  const file = e.target.files?.[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    predictorThumbDataUrl = reader.result;
+    document.getElementById('predictorThumbPreview').innerHTML = `<img src="${predictorThumbDataUrl}" style="max-width:240px; border-radius:var(--radius-md); border:1px solid var(--border-soft);">`;
+  };
+  reader.readAsDataURL(file);
+};
+
+const PREDICTOR_SYSTEM = `너는 유튜브 성과 예측 전문가다. 제목·(있다면) 썸네일 이미지·대본 초안을 함께 보고 예상 CTR과 예상 평균 시청 지속시간을 통합 예측한다. 실제 애널리틱스 데이터가 아닌 콘텐츠 신호 기반 추정임을 감안하고 JSON으로만 응답한다.
+{
+ "predictedCTR":0-100,
+ "predictedRetention":0-100,
+ "ctrReasoning":"CTR 예측 근거 (제목/썸네일 기준) 2~3문장",
+ "retentionReasoning":"시청 지속시간 예측 근거 (대본/구성 기준, 대본이 없으면 제목·주제 기준) 2~3문장",
+ "weakestLink":"제목/썸네일/대본 중 지금 가장 약한 고리",
+ "improvements":["개선 제안 4개, 제목/썸네일/대본 각각 최소 1개씩 포함되도록"]
+}`;
+
+document.getElementById('btnRunPredictor').onclick = async ()=>{
+  const btn = document.getElementById('btnRunPredictor');
+  const title = document.getElementById('predictorTitleInput').value.trim();
+  const script = document.getElementById('predictorScriptInput').value.trim();
+  const resultEl = document.getElementById('predictorResult');
+  if(!title){ toast('제목을 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const userPrompt = `제목: ${title}\n썸네일 이미지: ${predictorThumbDataUrl? '첨부됨 (아래 이미지 참고)':'없음'}\n대본 초안: ${script? script.slice(0,3000) : '없음'}`;
+    const opts = {json:true, temperature:0.6};
+    if(predictorThumbDataUrl) opts.imageDataUrl = predictorThumbDataUrl;
+    const data = await callGPT(PREDICTOR_SYSTEM, userPrompt, opts);
+    resultEl.innerHTML = `<div class="card">
+      <div class="grid2">
+        ${scoreBar('예상 CTR', data.predictedCTR)}
+        ${scoreBar('예상 시청 지속시간', data.predictedRetention)}
+      </div>
+      <div class="result-block"><h4>CTR 예측 근거</h4><p>${escapeHTML(data.ctrReasoning||'')}</p></div>
+      <div class="result-block"><h4>시청 지속시간 예측 근거</h4><p>${escapeHTML(data.retentionReasoning||'')}</p></div>
+      <div class="result-block"><h4>가장 약한 고리</h4><p><span class="pill gold">${escapeHTML(data.weakestLink||'')}</span></p></div>
+      <div class="result-block"><h4>개선 제안</h4><p>${(data.improvements||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+    </div>`;
+    archiveSave('predictor', title, data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   19) A/B 테스트 관리
+   ========================================================= */
+const ABTEST_SYSTEM = `너는 유튜브 A/B 테스트 분석 전문가다. 두 안(A/B)을 비교해 JSON으로만 응답한다.
+{
+ "winner":"A"|"B"|"우열 가리기 어려움",
+ "winnerReason":"승자를 고른 이유 2~3문장",
+ "scoreA":0-100, "scoreB":0-100,
+ "keyDifferences":["A와 B의 핵심 차이 2~3개"],
+ "recommendation":"실제로 어떤 요소를 테스트에 반영하면 좋을지 제안 1~2문장"
+}`;
+
+function abtestHistoryKey(){ return 'nr_abtest_history'; }
+function saveAbtestHistory(entry){
+  const list = Store.getJSON(abtestHistoryKey(), []);
+  list.unshift(entry);
+  Store.setJSON(abtestHistoryKey(), list.slice(0,100));
+}
+function renderAbtestHistory(){
+  const list = Store.getJSON(abtestHistoryKey(), []);
+  const el = document.getElementById('abtestHistory');
+  if(!list.length){ el.innerHTML = `<div class="empty">아직 테스트 기록이 없습니다.</div>`; return; }
+  el.innerHTML = list.map(h=>{
+    const d = new Date(h.date);
+    return `<div class="idea-card">
+      <div class="imeta">${h.typeLabel} · ${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</div>
+      <div class="ititle">A: ${escapeHTML(h.a)} <span style="color:var(--text-muted); font-weight:400;">vs</span> B: ${escapeHTML(h.b)}</div>
+      <div class="ihook" style="margin-top:6px;">승자: <span class="pill gold">${escapeHTML(h.winner)}</span> (A ${h.scoreA} / B ${h.scoreB})</div>
+    </div>`;
+  }).join('');
+}
+
+document.getElementById('btnRunAbtest').onclick = async ()=>{
+  const btn = document.getElementById('btnRunAbtest');
+  const type = document.getElementById('abtestTypeSelect').value;
+  const typeLabel = type==='title' ? '제목 비교' : '썸네일 문구 비교';
+  const a = document.getElementById('abtestAInput').value.trim();
+  const b = document.getElementById('abtestBInput').value.trim();
+  const resultEl = document.getElementById('abtestResult');
+  if(!a || !b){ toast('A안과 B안을 모두 입력해주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(ABTEST_SYSTEM, `유형: ${typeLabel}\nA안: ${a}\nB안: ${b}`, {json:true, temperature:0.5});
+    resultEl.innerHTML = `<div class="card">
+      <div class="grid2">
+        <div class="idea-card" style="${data.winner==='A'? 'border-color:var(--accent);':''}">
+          <div class="imeta">A안 ${data.winner==='A'?'🏆':''}</div>
+          <div class="ititle">${escapeHTML(a)}</div>
+          <div style="margin-top:8px;">${scoreBar('점수', data.scoreA)}</div>
+        </div>
+        <div class="idea-card" style="${data.winner==='B'? 'border-color:var(--accent);':''}">
+          <div class="imeta">B안 ${data.winner==='B'?'🏆':''}</div>
+          <div class="ititle">${escapeHTML(b)}</div>
+          <div style="margin-top:8px;">${scoreBar('점수', data.scoreB)}</div>
+        </div>
+      </div>
+      <div class="result-block"><h4>승자: ${escapeHTML(data.winner||'-')}</h4><p>${escapeHTML(data.winnerReason||'')}</p></div>
+      <div class="result-block"><h4>핵심 차이</h4><p>${(data.keyDifferences||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block"><h4>추천</h4><p>${escapeHTML(data.recommendation||'')}</p></div>
+    </div>`;
+    saveAbtestHistory({ date:new Date().toISOString(), typeLabel, a, b, winner:data.winner, scoreA:data.scoreA, scoreB:data.scoreB });
+    renderAbtestHistory();
+    archiveSave('abtest', `${typeLabel}: ${a} vs ${b}`, data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+renderAbtestHistory();
+
+/* =========================================================
+   12) 대시보드
+   ========================================================= */
+function renderGrowthChart(channelSnaps){
+  if(!channelSnaps || channelSnaps.length < 2){
+    return `<div class="empty">채널 조회를 이틀 이상 실행하면 구독자 성장 그래프가 표시됩니다. (현재 스냅샷 ${channelSnaps?.length||0}개)</div>`;
+  }
+  const W = 700, H = 220, padL = 46, padR = 16, padT = 16, padB = 30;
+  const vals = channelSnaps.map(s=>s.subs);
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const range = (max-min) || 1;
+  const stepX = (W-padL-padR) / (channelSnaps.length-1);
+  const points = channelSnaps.map((s,i)=>{
+    const x = padL + i*stepX;
+    const y = padT + (1 - (s.subs-min)/range) * (H-padT-padB);
+    return {x,y,s};
+  });
+  const pathD = points.map((p,i)=> (i===0?'M':'L')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+  const areaD = pathD + ` L${points[points.length-1].x.toFixed(1)} ${H-padB} L${points[0].x.toFixed(1)} ${H-padB} Z`;
+  const dots = points.map(p=>`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3.5" fill="var(--accent)" stroke="var(--bg-card)" stroke-width="2"/>`).join('');
+  const labels = points.filter((_,i)=> i===0 || i===points.length-1 || i%Math.ceil(points.length/6)===0)
+    .map(p=>`<text x="${p.x.toFixed(1)}" y="${H-10}" font-size="9.5" fill="var(--text-muted)" text-anchor="middle" font-family="var(--font-mono)">${p.s.date.slice(5)}</text>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%; height:auto; overflow:visible;">
+    <defs><linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path d="${areaD}" fill="url(#growthGrad)"/>
+    <path d="${pathD}" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+    ${dots}
+    ${labels}
+    <text x="${padL}" y="${padT+2}" font-size="10" fill="var(--text-muted)" font-family="var(--font-mono)">${max.toLocaleString()}</text>
+    <text x="${padL}" y="${H-padB-2}" font-size="10" fill="var(--text-muted)" font-family="var(--font-mono)">${min.toLocaleString()}</text>
+  </svg>`;
+}
+
+function renderDashboardTab(){
+  const el = document.getElementById('dashboardContent');
+  const lastChannel = Store.getJSON(STORE_KEYS.lastChannel, null);
+  const snaps = Store.getJSON(STORE_KEYS.channelSnapshots, []);
+  const lastCoach = Store.getJSON(STORE_KEYS.lastCoach, null);
+  const archiveList = Store.getJSON(STORE_KEYS.archive, []);
+
+  if(!lastChannel){
+    el.innerHTML = `<div class="card"><div class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><br>
+      채널 조회 탭에서 채널을 한 번 불러오면 대시보드가 채워집니다.
+    </div></div>`;
+    return;
+  }
+
+  const channelSnaps = snaps.filter(s=> s.channelId===lastChannel.channelId).sort((a,b)=> a.date.localeCompare(b.date));
+  const latest = channelSnaps[channelSnaps.length-1];
+  const prev = channelSnaps.length>1 ? channelSnaps[channelSnaps.length-2] : null;
+  const subDelta = prev? latest.subs - prev.subs : null;
+  const viewDelta = prev? latest.totalViews - prev.totalViews : null;
+
+  const growthScore = Math.min(100, Math.round((lastChannel.subs/1000) + (lastChannel.videoCount*0.3) + (lastChannel.totalViews/100000)));
+
+  const weekAgo = Date.now() - 7*24*60*60*1000;
+  const weekActivity = archiveList.filter(a=> new Date(a.date).getTime() > weekAgo).length;
+
+  const rankedVideos = [...(lastChannel.videos||[])].sort((a,b)=> b.views - a.views).slice(0,5);
+  const lastAiEval = Store.getJSON(STORE_KEYS.lastAiEval, null);
+
+  el.innerHTML = `
+    <div class="grid4">
+      <div class="card stat-card">
+        <div class="imeta">오늘 구독자 증가</div>
+        ${subDelta!==null
+          ? `<div class="stat-value" style="color:${subDelta>=0?'var(--teal)':'var(--danger)'};">${subDelta>=0?'+':''}${subDelta.toLocaleString()}</div><div class="stat-sub">총 구독자 ${lastChannel.subs.toLocaleString()}</div>`
+          : `<div class="stat-value">${lastChannel.subs.toLocaleString()}</div><div class="stat-sub">스냅샷 1회 · 내일부터 증감 표시</div>`}
+      </div>
+      <div class="card stat-card">
+        <div class="imeta">오늘 조회수</div>
+        ${viewDelta!==null
+          ? `<div class="stat-value" style="color:${viewDelta>=0?'var(--teal)':'var(--danger)'};">${viewDelta>=0?'+':''}${viewDelta.toLocaleString()}</div><div class="stat-sub">총 조회수 ${lastChannel.totalViews.toLocaleString()}</div>`
+          : `<div class="stat-value">${lastChannel.totalViews.toLocaleString()}</div><div class="stat-sub">스냅샷 1회 · 내일부터 증감 표시</div>`}
+      </div>
+      <div class="card stat-card">
+        <div class="imeta">CTR</div>
+        <div class="stat-value" style="color:var(--text-muted); font-size:15px;">비공개 데이터</div>
+        <div class="stat-locked">YouTube 스튜디오 애널리틱스(OAuth 로그인)에서만 확인 가능해 API 키만으로는 조회할 수 없습니다.</div>
+      </div>
+      <div class="card stat-card">
+        <div class="imeta">평균 시청시간</div>
+        <div class="stat-value" style="color:var(--text-muted); font-size:15px;">비공개 데이터</div>
+        <div class="stat-locked">CTR과 마찬가지로 비공개 애널리틱스 항목입니다.</div>
+      </div>
+    </div>
+
+    <div class="grid3" style="margin-top:16px;">
+      <div class="card stat-card">
+        <div class="imeta">AI 성장점수 <span style="color:var(--text-muted);">(참고용 추정)</span></div>
+        <div class="stat-value" style="color:var(--accent);">${growthScore}</div>
+        <div class="stat-sub">구독자·조회수·업로드량 기반 추정치</div>
+      </div>
+      <div class="card stat-card">
+        <div class="imeta">영상 수</div>
+        <div class="stat-value">${lastChannel.videoCount.toLocaleString()}</div>
+        <div class="stat-sub">채널 전체 업로드 수</div>
+      </div>
+      <div class="card stat-card">
+        <div class="imeta">이번주 분석 활동</div>
+        <div class="stat-value">${weekActivity}건</div>
+        <div class="stat-sub">최근 7일간 실행한 분석</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-title">성장 그래프 <span class="badge">SUBSCRIBERS</span></div>
+      ${renderGrowthChart(channelSnaps)}
+    </div>
+
+    <div class="grid2" style="margin-top:16px;">
+      <div class="card">
+        <div class="card-title">조회수 순위 TOP 5</div>
+        ${rankedVideos.length? rankedVideos.map((v,i)=>`
+          <div class="idea-card" style="display:flex; align-items:center;">
+            <span class="rank-badge">${i+1}</span>
+            <div style="flex:1; min-width:0;">
+              <div class="ititle" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHTML(v.title)}</div>
+              <div class="imeta">조회수 ${v.views.toLocaleString()}</div>
+            </div>
+          </div>`).join('') : '<div class="empty">업로드 데이터 없음</div>'}
+      </div>
+      <div class="card">
+        <div class="card-title">${escapeHTML(lastChannel.title)} · 최근 업로드</div>
+        ${lastChannel.videos.slice(0,5).map(v=>`<div class="idea-card"><div class="ititle">${escapeHTML(v.title)}</div><div class="imeta">${new Date(v.publishedAt).toLocaleDateString('ko-KR')} · 조회수 ${v.views.toLocaleString()}</div></div>`).join('') || '<div class="empty">업로드 데이터 없음</div>'}
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-title">AI 종합 평가 <span class="badge">EVALUATION</span></div>
+      <div id="aiEvalBody">
+        ${lastAiEval? `<p style="font-size:13.3px; color:var(--text-secondary); line-height:1.7; white-space:pre-wrap;">${escapeHTML(lastAiEval.text)}</p><div style="font-size:11px; color:var(--text-muted); margin-top:8px;">평가 시각: ${new Date(lastAiEval.date).toLocaleString('ko-KR')}</div>` : `<div class="empty">아직 평가받은 적이 없습니다. 아래 버튼으로 AI 종합 평가를 받아보세요.</div>`}
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-ghost btn-sm" id="btnAiEval">${lastAiEval? '다시 평가받기' : 'AI 평가 받기'} →</button>
+      </div>
+    </div>
+
+    <div class="grid3" style="margin-top:16px;">
+      <div class="card">
+        <div class="card-title">오늘 해야할 일</div>
+        ${lastCoach? `<ul class="task-list">${(lastCoach.todayTasks||[]).map(t=>`<li><div class="chk"></div>${escapeHTML(t)}</li>`).join('')}</ul>` : `<div class="empty">AI 성장 코치 탭에서 로드맵을 받아보세요.</div>`}
+      </div>
+      <div class="card">
+        <div class="card-title">이번주 목표</div>
+        ${lastCoach? `<ul class="task-list">${(lastCoach.weekTasks||[]).map(t=>`<li><div class="chk"></div>${escapeHTML(t)}</li>`).join('')}</ul>` : `<div class="empty">AI 성장 코치 탭에서 로드맵을 받아보세요.</div>`}
+      </div>
+      <div class="card">
+        <div class="card-title">이번달 목표</div>
+        ${lastCoach? `<ul class="task-list">${(lastCoach.monthTasks||[]).map(t=>`<li><div class="chk"></div>${escapeHTML(t)}</li>`).join('')}</ul>` : `<div class="empty">AI 성장 코치 탭에서 로드맵을 받아보세요.</div>`}
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div class="card-title">이번주 활동 요약</div>
+      <div class="result-block" style="border-top:none; padding-top:0; margin-top:0;">
+        <p>최근 7일간 <b style="color:var(--accent); font-family:var(--font-mono);">${weekActivity}</b>건의 분석을 실행했습니다.</p>
+        ${lastCoach? `<p style="margin-top:8px;">현재 단계: <span class="pill gold">${escapeHTML(lastCoach.stage||'-')}</span></p>` : ''}
+      </div>
+    </div>`;
+
+  document.getElementById('btnAiEval').onclick = ()=> runAiEvaluation(lastChannel, lastCoach);
+}
+
+const AI_EVAL_SYSTEM = `너는 유튜브 채널 대시보드에 들어갈 짧은 AI 종합 평가를 작성하는 컨설턴트다. 채널 데이터를 보고 한국어로 4~6문장의 총평을 작성한다. 설명 없이 평가 본문만 출력한다. 구독자 규모, 최근 업로드 흐름, 참여도, 다음에 집중할 만한 방향을 자연스럽게 녹여서 쓴다.`;
+async function runAiEvaluation(lastChannel, lastCoach){
+  const btn = document.getElementById('btnAiEval');
+  const body = document.getElementById('aiEvalBody');
+  setLoading(btn, true);
+  try{
+    const titlesStr = (lastChannel.videos||[]).slice(0,5).map(v=>'- '+v.title).join('\n');
+    const text = await callGPT(AI_EVAL_SYSTEM, `채널: ${lastChannel.title}\n구독자: ${lastChannel.subs}\n총 조회수: ${lastChannel.totalViews}\n영상 수: ${lastChannel.videoCount}\n최근 영상:\n${titlesStr}\n최근 성장코치 진단: ${lastCoach?.diagnosis || '없음'}`, {temperature:0.7});
+    const evalData = { text, date:new Date().toISOString() };
+    Store.setJSON(STORE_KEYS.lastAiEval, evalData);
+    body.innerHTML = `<p style="font-size:13.3px; color:var(--text-secondary); line-height:1.7; white-space:pre-wrap;">${escapeHTML(text)}</p><div style="font-size:11px; color:var(--text-muted); margin-top:8px;">평가 시각: ${new Date(evalData.date).toLocaleString('ko-KR')}</div>`;
+    archiveSave('aieval', lastChannel.title+' AI 종합 평가', evalData);
+  }catch(e){
+    body.innerHTML = `<p style="color:var(--danger)">${escapeHTML(e.message)}</p>`;
+  }finally{ setLoading(btn, false, 'AI 평가 받기'); }
+}
+
+/* =========================================================
+   13) 자동 리포트
+   ========================================================= */
+const REPORT_SYSTEM = `너는 유튜브 채널 운영 컨설턴트다. 채널 스냅샷 변화와 최근 활동 로그를 바탕으로 정기 리포트를 작성해 JSON으로만 응답한다.
+{
+ "summary":"이번 기간 총평 3~4문장",
+ "growthAnalysis":"구독자/조회수 변화 해석",
+ "issues":["발견된 문제점 2~3개"],
+ "improvements":["개선 제안 3개"],
+ "goalProgress":"목표 대비 진행 상황에 대한 코멘트 (구체적 수치가 없다면 정성적으로)"
+}`;
+document.getElementById('btnGenReport').onclick = async ()=>{
+  const btn = document.getElementById('btnGenReport');
+  const period = document.getElementById('reportPeriodSelect').value;
+  const resultEl = document.getElementById('reportResult');
+  const lastChannel = Store.getJSON(STORE_KEYS.lastChannel, null);
+  const snaps = Store.getJSON(STORE_KEYS.channelSnapshots, []);
+  const archiveList = Store.getJSON(STORE_KEYS.archive, []);
+  const lastCoach = Store.getJSON(STORE_KEYS.lastCoach, null);
+
+  const days = period==='week'? 7 : 30;
+  const cutoff = Date.now() - days*24*60*60*1000;
+  const periodActivity = archiveList.filter(a=> new Date(a.date).getTime() > cutoff);
+  const byType = {};
+  periodActivity.forEach(a=>{ byType[a.type] = (byType[a.type]||0)+1; });
+
+  let channelSnaps = [];
+  let subDelta = null, viewDelta = null;
+  if(lastChannel){
+    channelSnaps = snaps.filter(s=> s.channelId===lastChannel.channelId).sort((a,b)=>a.date.localeCompare(b.date));
+    const inRange = channelSnaps.filter(s=> new Date(s.date).getTime() > cutoff);
+    if(inRange.length>=2){ subDelta = inRange[inRange.length-1].subs - inRange[0].subs; viewDelta = inRange[inRange.length-1].totalViews - inRange[0].totalViews; }
+  }
+
+  setLoading(btn, true);
+  try{
+    const summaryInput = `기간: 최근 ${days}일\n채널: ${lastChannel?.title || '미연결'}\n구독자 변화: ${subDelta!==null? subDelta : '데이터 부족'}\n조회수 변화: ${viewDelta!==null? viewDelta : '데이터 부족'}\n이 기간 실행한 분석: ${JSON.stringify(byType)}\n최근 성장코치 진단: ${lastCoach?.diagnosis || '없음'}`;
+    const gpt = await callGPT(REPORT_SYSTEM, summaryInput, {json:true, temperature:0.6});
+
+    resultEl.innerHTML = `<div class="card">
+      <div class="card-title">${period==='week'?'주간':'월간'} 리포트 · ${new Date().toLocaleDateString('ko-KR')}</div>
+      <div class="grid3">
+        <div class="idea-card"><div class="imeta">구독자 변화</div><div class="ititle" style="font-family:var(--font-mono);">${subDelta!==null? (subDelta>=0?'+':'')+subDelta.toLocaleString() : '데이터 부족'}</div></div>
+        <div class="idea-card"><div class="imeta">조회수 변화</div><div class="ititle" style="font-family:var(--font-mono);">${viewDelta!==null? (viewDelta>=0?'+':'')+viewDelta.toLocaleString() : '데이터 부족'}</div></div>
+        <div class="idea-card"><div class="imeta">이 기간 분석 실행</div><div class="ititle" style="font-family:var(--font-mono);">${periodActivity.length}건</div></div>
+      </div>
+      <div class="result-block"><h4>총평</h4><p>${escapeHTML(gpt.summary||'')}</p></div>
+      <div class="result-block"><h4>성장 분석</h4><p>${escapeHTML(gpt.growthAnalysis||'')}</p></div>
+      <div class="result-block"><h4>문제점</h4><p>${(gpt.issues||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block"><h4>개선 제안</h4><p>${(gpt.improvements||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block"><h4>목표 진행 코멘트</h4><p>${escapeHTML(gpt.goalProgress||'')}</p></div>
+      <div style="margin-top:10px; font-size:11px; color:var(--text-muted);">※ 데이터가 부족한 항목은 채널 조회를 여러 날에 걸쳐 반복 실행하면 정확도가 올라갑니다.</div>
+    </div>`;
+    archiveSave('report', `${period==='week'?'주간':'월간'} 리포트 ${new Date().toLocaleDateString('ko-KR')}`, gpt);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+document.getElementById('btnPrintReport').onclick = ()=> window.print();
+
+/* =========================================================
+   14) 알고리즘 분석
+   ========================================================= */
+const ALGORITHM_SYSTEM = `너는 유튜브 알고리즘 전문가다. 채널의 업로드 패턴과 참여 신호를 바탕으로 알고리즘 적합도를 JSON으로만 진단한다.
+{
+ "algorithmScore":0-100,
+ "uploadConsistency":"업로드 주기/일관성 평가","sessionTimeSignal":"세션 시간(추천 지속 시청) 관점 평가",
+ "engagementSignal":"참여 신호(좋아요/댓글 비율) 평가","clickRetentionBalance":"클릭률과 유지력의 균형 평가",
+ "recommendations":["알고리즘 노출을 늘리기 위한 구체적 실행 제안 4개"]
+}`;
+document.getElementById('btnAnalyzeAlgorithm').onclick = async ()=>{
+  const btn = document.getElementById('btnAnalyzeAlgorithm');
+  const resultEl = document.getElementById('algorithmResult');
+  const lastChannel = Store.getJSON(STORE_KEYS.lastChannel, null);
+  if(!lastChannel){ toast('먼저 채널 조회 탭에서 채널을 불러와주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const videos = lastChannel.videos||[];
+    const dates = videos.map(v=>new Date(v.publishedAt).getTime()).sort((a,b)=>b-a);
+    let avgGapDays = '알 수 없음';
+    if(dates.length>1){
+      const gaps = []; for(let i=0;i<dates.length-1;i++) gaps.push((dates[i]-dates[i+1])/(1000*60*60*24));
+      avgGapDays = (gaps.reduce((a,b)=>a+b,0)/gaps.length).toFixed(1)+'일';
+    }
+    const avgViews = videos.length? Math.round(videos.reduce((a,v)=>a+v.views,0)/videos.length) : 0;
+    const avgLikes = videos.length? Math.round(videos.reduce((a,v)=>a+v.likes,0)/videos.length) : 0;
+    const data = await callGPT(ALGORITHM_SYSTEM, `채널: ${lastChannel.title}\n구독자: ${lastChannel.subs}\n평균 업로드 간격: ${avgGapDays}\n최근 영상 평균 조회수: ${avgViews}\n최근 영상 평균 좋아요: ${avgLikes}`, {json:true, temperature:0.6});
+    resultEl.innerHTML = `<div class="card">
+      ${scoreBar('알고리즘 적합도 점수', data.algorithmScore)}
+      <div class="result-block"><h4>업로드 일관성</h4><p>${escapeHTML(data.uploadConsistency||'')}</p></div>
+      <div class="result-block"><h4>세션 시간 신호</h4><p>${escapeHTML(data.sessionTimeSignal||'')}</p></div>
+      <div class="result-block"><h4>참여 신호</h4><p>${escapeHTML(data.engagementSignal||'')}</p></div>
+      <div class="result-block"><h4>클릭률-유지력 균형</h4><p>${escapeHTML(data.clickRetentionBalance||'')}</p></div>
+      <div class="result-block"><h4>실행 제안</h4><ul class="task-list">${(data.recommendations||[]).map(t=>`<li><div class="chk"></div>${escapeHTML(t)}</li>`).join('')}</ul></div>
+    </div>`;
+    archiveSave('algorithm', lastChannel.title+' 알고리즘 분석', data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   15) AI 개선 제안 (채널 SWOT 진단)
+   ========================================================= */
+const IMPROVE_SYSTEM = `너는 유튜브 채널 컨설턴트다. 채널 데이터를 SWOT 관점으로 진단해 JSON으로만 응답한다.
+{
+ "strengths":["강점 3개"],
+ "weaknesses":["약점 3개"],
+ "problems":["현재 문제점 2~3개, 구체적으로"],
+ "priorityImprovements":["우선순위 순으로 정렬된 개선사항 4~5개. 1번이 가장 시급하고 임팩트가 큰 것"],
+ "expectedGrowthRate":"현재 추세가 유지될 때와, 우선 개선사항을 실행했을 때의 향후 3개월 예상 성장률을 비교하는 정성적 코멘트 2~3문장"
+}`;
+document.getElementById('btnAnalyzeImprove').onclick = async ()=>{
+  const btn = document.getElementById('btnAnalyzeImprove');
+  const resultEl = document.getElementById('improveResult');
+  const lastChannel = Store.getJSON(STORE_KEYS.lastChannel, null);
+  if(!lastChannel){ toast('먼저 채널 조회 탭에서 채널을 불러와주세요'); return; }
+  setLoading(btn, true);
+  try{
+    const titlesStr = (lastChannel.videos||[]).map(v=>'- '+v.title+` (조회수 ${v.views})`).join('\n');
+    const data = await callGPT(IMPROVE_SYSTEM, `채널: ${lastChannel.title}\n구독자: ${lastChannel.subs}\n총 조회수: ${lastChannel.totalViews}\n영상 수: ${lastChannel.videoCount}\n최근 영상:\n${titlesStr}`, {json:true, temperature:0.6});
+    resultEl.innerHTML = `<div class="card">
+      <div class="grid2">
+        <div class="result-block" style="border-top:none; margin-top:0; padding-top:0;"><h4>강점</h4><ul class="task-list">${(data.strengths||[]).map(t=>`<li><div class="chk"></div>${escapeHTML(t)}</li>`).join('')}</ul></div>
+        <div class="result-block" style="border-top:none; margin-top:0; padding-top:0;"><h4>약점</h4><ul class="task-list">${(data.weaknesses||[]).map(t=>`<li><div class="chk"></div>${escapeHTML(t)}</li>`).join('')}</ul></div>
+      </div>
+      <div class="result-block"><h4>현재 문제점</h4><p>${(data.problems||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+      <div class="result-block">
+        <h4>우선 개선사항 <span style="color:var(--text-muted); font-weight:400; font-size:11.5px;">(우선순위 순)</span></h4>
+        ${(data.priorityImprovements||[]).map((t,i)=>`
+          <div class="idea-card" style="display:flex; align-items:flex-start; margin-top:${i===0?'8px':'0'};">
+            <span class="rank-badge" style="margin-top:1px;">${i+1}</span>
+            <div class="ihook" style="flex:1;">${escapeHTML(t)}</div>
+          </div>`).join('')}
+      </div>
+      <div class="result-block"><h4>예상 성장률</h4><p>${escapeHTML(data.expectedGrowthRate||'')}</p></div>
+    </div>`;
+    archiveSave('improve', lastChannel.title+' 종합 진단', data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   16) 성장 전략 (중장기)
+   ========================================================= */
+const STRATEGY_SYSTEM = `너는 유튜브 채널 전략 컨설턴트다. 단기 할일이 아닌 중장기(3/6/12개월) 전략과, 구독자 규모별 실행 가이드를 JSON으로만 제시한다.
+{
+ "positioning":"채널 포지셔닝 제안 2~3문장",
+ "contentPillars":["콘텐츠 필러(축) 3~4개, 각각 짧은 설명 포함"],
+ "month3":"3개월 목표와 핵심 액션","month6":"6개월 목표와 핵심 액션","month12":"12개월 목표와 핵심 액션",
+ "risks":["예상되는 리스크 2개"],
+ "stagePlaybook":[
+   {"stage":"0~1,000명", "doThis":["해야 할 것 2~3개"], "dontDoThis":["하지 말 것 2~3개"], "priority":"이 단계 최우선 과제 한 가지", "roadmap":"다음 단계로 가는 로드맵 1~2문장"},
+   {"stage":"1,000~10,000명", "doThis":[], "dontDoThis":[], "priority":"", "roadmap":""},
+   {"stage":"1만~10만명", "doThis":[], "dontDoThis":[], "priority":"", "roadmap":""},
+   {"stage":"10만~100만명", "doThis":[], "dontDoThis":[], "priority":"", "roadmap":""}
+ ]
+}
+stagePlaybook은 4개 단계 모두 빠짐없이 채운다(예시로 비워둔 doThis/dontDoThis 등도 반드시 채운다).`;
+
+function pickCurrentStageIndex(subs){
+  if(subs===null || subs===undefined) return -1;
+  if(subs < 1000) return 0;
+  if(subs < 10000) return 1;
+  if(subs < 100000) return 2;
+  return 3;
+}
+
+document.getElementById('btnAnalyzeStrategy').onclick = async ()=>{
+  const btn = document.getElementById('btnAnalyzeStrategy');
+  const goal = document.getElementById('strategyGoalInput').value.trim();
+  const resultEl = document.getElementById('strategyResult');
+  const lastChannel = Store.getJSON(STORE_KEYS.lastChannel, null);
+  setLoading(btn, true);
+  try{
+    const data = await callGPT(STRATEGY_SYSTEM, `채널: ${lastChannel?.title||'미연결'}\n구독자: ${lastChannel?.subs ?? '미상'}\n목표: ${goal||'미입력'}`, {json:true, temperature:0.7, maxTokens:2200});
+    const currentIdx = pickCurrentStageIndex(lastChannel?.subs);
+    resultEl.innerHTML = `<div class="card">
+      <div class="result-block" style="border-top:none; margin-top:0; padding-top:0;"><h4>채널 포지셔닝</h4><p>${escapeHTML(data.positioning||'')}</p></div>
+      <div class="result-block"><h4>콘텐츠 필러</h4>${(data.contentPillars||[]).map(t=>`<span class="pill gold" style="display:block; margin-bottom:6px;">${escapeHTML(t)}</span>`).join('')}</div>
+      <div class="grid3" style="margin-top:16px;">
+        <div class="idea-card"><div class="imeta">3개월</div><div class="ihook">${escapeHTML(data.month3||'')}</div></div>
+        <div class="idea-card"><div class="imeta">6개월</div><div class="ihook">${escapeHTML(data.month6||'')}</div></div>
+        <div class="idea-card"><div class="imeta">12개월</div><div class="ihook">${escapeHTML(data.month12||'')}</div></div>
+      </div>
+      <div class="result-block"><h4>리스크</h4><p>${(data.risks||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">단계별 실행 가이드 <span class="badge">STAGE PLAYBOOK</span></div>
+      <div class="stage-track">
+        ${(data.stagePlaybook||[]).map((s,i)=>`
+          <div class="stage-node">
+            <div class="stage-dot ${i<currentIdx?'done':(i===currentIdx?'current':'')}"></div>
+            <div class="stage-label ${i===currentIdx?'active':''}">${escapeHTML((s.stage||'').replace('명',''))}</div>
+          </div>`).join('')}
+      </div>
+      ${currentIdx>=0? `<p style="font-size:11px; color:var(--text-muted); margin-bottom:14px;">현재 채널 구독자 기준 위치가 표시됩니다.</p>` : ''}
+      <div class="grid2">
+        ${(data.stagePlaybook||[]).map((s,i)=>`
+          <div class="idea-card" style="${i===currentIdx? 'border-color:var(--accent);' : ''}">
+            <div class="ititle" style="display:flex; align-items:center; gap:6px;">
+              ${escapeHTML(s.stage||'')} ${i===currentIdx? '<span class="pill gold" style="margin:0;">현재</span>':''}
+            </div>
+            <div class="result-block" style="border-top:none; margin-top:8px; padding-top:0;">
+              <h4>해야 할 것</h4>
+              <p>${(s.doThis||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p>
+            </div>
+            <div class="result-block">
+              <h4>하지 말 것</h4>
+              <p>${(s.dontDoThis||[]).map(t=>'• '+escapeHTML(t)).join('\\n')}</p>
+            </div>
+            <div class="result-block">
+              <h4>우선순위</h4>
+              <p><span class="pill">${escapeHTML(s.priority||'')}</span></p>
+            </div>
+            <div class="result-block">
+              <h4>로드맵</h4>
+              <p>${escapeHTML(s.roadmap||'')}</p>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+    archiveSave('strategy', (lastChannel?.title||'전략')+' 성장 전략', data);
+  }catch(e){
+    resultEl.innerHTML = `<div class="card"><p style="color:var(--danger)">${escapeHTML(e.message)}</p></div>`;
+  }finally{ setLoading(btn, false); }
+};
+
+/* =========================================================
+   17) 헤더: 테마 토글 / 사이드바 접기 / 검색 / 알림 / 프로필
+   ========================================================= */
+const THEME_KEY = 'nr_theme';
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  document.body.setAttribute('data-theme', theme);
+  const icon = document.getElementById('themeIconMoon');
+  icon.innerHTML = theme==='light'
+    ? '<circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>'
+    : '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>';
+}
+document.getElementById('themeToggle').onclick = ()=>{
+  const cur = Store.get(THEME_KEY,'light');
+  const next = cur==='dark' ? 'light' : 'dark';
+  Store.set(THEME_KEY, next);
+  applyTheme(next);
+};
+applyTheme(Store.get(THEME_KEY,'light'));
+
+const SIDEBAR_KEY = 'nr_sidebar_collapsed';
+function applySidebarState(collapsed){
+  document.getElementById('sidebar').classList.toggle('collapsed', collapsed);
+}
+document.getElementById('sidebarToggle').onclick = ()=>{
+  const cur = Store.get(SIDEBAR_KEY,'0')==='1';
+  const next = !cur;
+  Store.set(SIDEBAR_KEY, next? '1':'0');
+  applySidebarState(next);
+};
+applySidebarState(Store.get(SIDEBAR_KEY,'0')==='1');
+
+/* 검색: 엔터 시 데이터센터 탭으로 이동해 검색어 적용 */
+document.getElementById('topbarSearch').addEventListener('keydown', (e)=>{
+  if(e.key!=='Enter') return;
+  const q = e.target.value.trim();
+  document.querySelector('.nav-btn[data-tab="archive"]').click();
+  const searchInput = document.getElementById('archiveSearchInput');
+  searchInput.value = q;
+  renderArchive();
+});
+
+/* 알림: 최근 분석 기록 5개를 알림처럼 보여준다 (실데이터 기반) */
+function toggleDropdown(panelId, otherPanelId){
+  const panel = document.getElementById(panelId);
+  const other = document.getElementById(otherPanelId);
+  other?.classList.add('hidden');
+  panel.classList.toggle('hidden');
+}
+document.getElementById('notifBtn').onclick = (e)=>{
+  e.stopPropagation();
+  const list = Store.getJSON(STORE_KEYS.archive, []).slice(0,6);
+  const panel = document.getElementById('notifPanel');
+  panel.innerHTML = list.length
+    ? list.map(item=>{
+        const d = new Date(item.date);
+        return `<div class="dropdown-item"><b style="color:var(--accent);">${TYPE_LABEL[item.type]||item.type}</b><br>${escapeHTML(item.title)}<br><span style="color:var(--text-muted); font-size:10.5px;">${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}</span></div>`;
+      }).join('')
+    : `<div class="dropdown-empty">아직 알림이 없습니다.</div>`;
+  document.getElementById('notifDot').style.display = list.length? 'block':'none';
+  toggleDropdown('notifPanel','profilePanel');
+};
+document.getElementById('profileChip').onclick = (e)=>{
+  e.stopPropagation();
+  const lastChannel = Store.getJSON(STORE_KEYS.lastChannel, null);
+  const panel = document.getElementById('profilePanel');
+  panel.innerHTML = lastChannel
+    ? `<div class="dropdown-item"><b>${escapeHTML(lastChannel.title)}</b><br><span style="color:var(--text-muted); font-size:11px;">구독자 ${lastChannel.subs.toLocaleString()}명</span></div>
+       <div class="dropdown-item" id="profileGoSettings" style="cursor:pointer; border-top:1px solid var(--border-soft); margin-top:4px; padding-top:10px;">⚙️ API 설정 열기</div>`
+    : `<div class="dropdown-empty">채널 조회 탭에서 채널을 연결해보세요.</div>
+       <div class="dropdown-item" id="profileGoSettings" style="cursor:pointer;">⚙️ API 설정 열기</div>`;
+  document.getElementById('profileGoSettings').onclick = ()=>{ settingsModal.classList.remove('hidden'); panel.classList.add('hidden'); };
+  toggleDropdown('profilePanel','notifPanel');
+};
+document.addEventListener('click', ()=>{
+  document.getElementById('notifPanel').classList.add('hidden');
+  document.getElementById('profilePanel').classList.add('hidden');
+});
+function refreshProfileChip(){
+  const lastChannel = Store.getJSON(STORE_KEYS.lastChannel, null);
+  const nameEl = document.getElementById('profileName');
+  const avatarEl = document.getElementById('profileAvatar');
+  if(lastChannel){
+    nameEl.textContent = lastChannel.title;
+    if(lastChannel.thumb){ avatarEl.outerHTML = `<img id="profileAvatar" src="${lastChannel.thumb}">`; }
+    else{ avatarEl.textContent = lastChannel.title.slice(0,1); }
+  }
+}
+refreshProfileChip();
+
+/* init */
+renderArchive();
+</script>
+</body>
+</html>
